@@ -324,7 +324,7 @@ function updateMessage() {
 	const NewVersion = `${Config.modulesFolder}/${ModuleName}/updates/${Version}`;
 	if (!FileUtilities.exists(NewVersion)) {
 		FileUtilities.newFile(NewVersion);
-		const Message = new Message(
+		const MessageStr = new Message(
 			StartSeparator,
 			`${Color.DARK_GREEN}Changelog:${BreakLine}`,
 			`${Color.GRAY}● ${Color.GREEN}added keybind to toggle module (Default is H)${BreakLine}`,
@@ -336,7 +336,7 @@ function updateMessage() {
 			new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${BreakLine}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 			EndSeparator
 		);
-		ChatLib.chat(Message);
+		ChatLib.chat(MessageStr);
 	}
 }
 
