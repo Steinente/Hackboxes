@@ -1,477 +1,688 @@
-import { @Vigilant, @SwitchProperty, @SelectorProperty } from 'Vigilance';
+import { @Vigilant, @SwitchProperty, @ColorProperty } from 'Vigilance';
+const Color = Java.type('java.awt.Color');
 
-// Strings
-const categoryDescription = '&cHackboxes &7v0.0.1 by &6Steinente &7/ &6EnteStein';
-const general = 'General';
-const updates = 'Updates';
-const spidersDen = 'Spider\'s Den';
-const dwarvenMines = 'Dwarven Mines';
-const dungeon = 'Dungeon';
-const end = 'The End';
-const theFarmingIslands = 'The Farming Islands';
-const hub = 'Hub';
-const enabled = 'Enabled';
-const throughWall = 'Through Wall';
-const color = 'Color';
-const broodfather = 'Broodfather';
-const mutant = 'Mutant Tarantula';
-const keeper = 'Arachne\'s Keeper';
-const mother = 'Brood Mother';
-const arachne = 'Arachne';
-const powderGhast = 'Powder Ghast';
-const superprotectron = 'Superprotectron';
-const arrow = 'Arrow';
-const ghost = 'Ghost';
-const bat = 'Bat';
-const bonzo = 'Bonzo';
-const livid = 'Livid';
-const eye = 'Summoning Eye';
-const zealot = 'Special Zealot';
-const trevor = 'Trevor Animal';
-const rat = 'Rat';
+const ModuleName = 'Hackboxes';
+const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
 
-// Variables
-const colorOptions = [
-    'Black',
-    'Blue',
-    'Green',
-    'Cyan',
-    'Red',
-    'Magenta',
-    'Yellow',
-    'White'
-];
+const CategoryDescription = `&c${ModuleName} &7v${Version} by &6Steinente &7/ &6EnteStein`;
+const SpecificPlaceDescription = 'Creates borders around significant entities at the specific place';
+const General = 'General';
+const SubGeneral = ' General ';
+const Updates = 'Updates';
+const Everywhere = 'Everywhere';
+const Hub = 'Hub';
+const SpidersDen = 'Spider\'s Den';
+const End = 'The End';
+const DwarvenMines = 'Dwarven Mines';
+const FarmingIslands = 'The Farming Islands';
+const Dungeon = 'Dungeon';
+const Enabled = 'Enabled';
+const ThroughWall = 'Through Wall';
+const ColorStr = 'Color';
+const RGB = 'RGB';
+const Gift = 'Gift';
+const Rat = 'Rat';
+const Father = 'Broodfather';
+const Mutant = 'Mutant Tarantula';
+const Keeper = 'Arachne\'s Keeper';
+const Mother = 'Brood Mother';
+const Arachne = 'Arachne';
+const Eye = 'Summoning Eye';
+const Zealot = 'Special Zealot';
+const PowderGhast = 'Powder Ghast';
+const Superprotectron = 'Superprotectron';
+const Arrow = 'Arrow';
+const Ghost = 'Ghost';
+const Trevor = 'Trevor Animal';
+const Bat = 'Bat';
+const Bonzo = 'Bonzo';
+const Livid = 'Livid';
 
 @Vigilant('Hackboxes')
 class Settings {
 
     // General start
     @SwitchProperty({
-        name: enabled,
+        name: Enabled,
         description: 'Creates borders around significant entities',
-        category: general,
-        subcategory: general
+        category: General,
+        subcategory: SubGeneral
     })
     enabled = true;
 
     @SwitchProperty({
         name: 'Notify when update',
-        category: general,
-        subcategory: updates
+        category: General,
+        subcategory: Updates
     })
     update = true;
     // General end
 
-    // Spider's Den start
+    // Everywhere start
     @SwitchProperty({
-        name: enabled,
-        description: 'Slayer Boss',
-        category: spidersDen,
-        subcategory: broodfather
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: Everywhere,
+        subcategory: SubGeneral
     })
-    broodfatherEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: spidersDen,
-        subcategory: broodfather
-    })
-    broodfatherThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: spidersDen,
-        subcategory: broodfather,
-        options: colorOptions,
-    })
-    broodfatherColor = 4;
+    everywhereEnabled = false;
 
     // --------------------------------------
 
     @SwitchProperty({
-        name: enabled,
-        description: 'Slayer Mini-Boss',
-        category: spidersDen,
-        subcategory: mutant
+        name: Enabled,
+        description: 'Gifts!',
+        category: Everywhere,
+        subcategory: Gift
     })
-    mutantEnabled = true;
+    giftEnabled = true;
 
     @SwitchProperty({
-        name: throughWall,
-        category: spidersDen,
-        subcategory: mutant
+        name: ThroughWall,
+        category: Everywhere,
+        subcategory: Gift
     })
-    mutantThroughWallEnabled = true;
+    giftThroughWallEnabled = false;
 
-    @SelectorProperty({
-        name: color,
-        category: spidersDen,
-        subcategory: mutant,
-        options: colorOptions,
+    @ColorProperty({
+        name: ColorStr,
+        category: Everywhere,
+        subcategory: Gift,
+        allowAlpha: false
     })
-    mutantColor = 5;
-
-    // --------------------------------------
+    giftColor = new Color(0, 1, 0);
 
     @SwitchProperty({
-        name: enabled,
-        description: 'Drops Arachne Keeper Fragment',
-        category: spidersDen,
-        subcategory: keeper
+        name: RGB,
+        category: Everywhere,
+        subcategory: Gift
     })
-    keeperEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: spidersDen,
-        subcategory: keeper
-    })
-    keeperThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: spidersDen,
-        subcategory: keeper,
-        options: colorOptions,
-    })
-    keeperColor = 2;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Drops Spider Talisman',
-        category: spidersDen,
-        subcategory: mother
-    })
-    motherEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: spidersDen,
-        subcategory: mother
-    })
-    motherThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: spidersDen,
-        subcategory: mother,
-        options: colorOptions,
-    })
-    motherColor = 2;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Summoned Boss',
-        category: spidersDen,
-        subcategory: arachne
-    })
-    arachneEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: spidersDen,
-        subcategory: arachne
-    })
-    arachneThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: spidersDen,
-        subcategory: arachne,
-        options: colorOptions,
-    })
-    arachneColor = 6;
-    // Spider's Den end
-
-    // Dwarven Mines start
-    @SwitchProperty({
-        name: enabled,
-        description: 'Drops 60 Mithril Powder per hit',
-        category: dwarvenMines,
-        subcategory: powderGhast
-    })
-    powderGhastEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dwarvenMines,
-        subcategory: powderGhast
-    })
-    powderGhastThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: dwarvenMines,
-        subcategory: powderGhast,
-        options: colorOptions,
-    })
-    powderGhastColor = 4;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Spawns during Goblin Raid',
-        category: dwarvenMines,
-        subcategory: superprotectron
-    })
-    superprotectronEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dwarvenMines,
-        subcategory: superprotectron
-    })
-    superprotectronThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: dwarvenMines,
-        subcategory: superprotectron,
-        options: colorOptions,
-    })
-    superprotectronColor = 4;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Shot arrows as long as the Powder Ghast lives',
-        category: dwarvenMines,
-        subcategory: arrow
-    })
-    arrowEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dwarvenMines,
-        subcategory: arrow
-    })
-    arrowThroughWallEnabled = false;
-
-    @SelectorProperty({
-        name: color,
-        category: dwarvenMines,
-        subcategory: arrow,
-        options: colorOptions,
-    })
-    arrowColor = 7;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Drops Sorrow',
-        category: dwarvenMines,
-        subcategory: ghost
-    })
-    ghostEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dwarvenMines,
-        subcategory: ghost
-    })
-    ghostThroughWallEnabled = false;
-
-    @SelectorProperty({
-        name: color,
-        category: dwarvenMines,
-        subcategory: ghost,
-        options: colorOptions,
-    })
-    ghostColor = 2;
-    // Dwarven Mines end
-
-    // Dungeon start
-    @SwitchProperty({
-        name: enabled,
-        description: 'Counts as a secret',
-        category: dungeon,
-        subcategory: bat
-    })
-    batEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dungeon,
-        subcategory: bat
-    })
-    batThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: dungeon,
-        subcategory: bat,
-        options: colorOptions,
-    })
-    batColor = 2;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Boss in Floor 1',
-        category: dungeon,
-        subcategory: bonzo
-    })
-    bonzoEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dungeon,
-        subcategory: bonzo
-    })
-    bonzoThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: dungeon,
-        subcategory: bonzo,
-        options: colorOptions,
-    })
-    bonzoColor = 1;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Boss in Floor 5',
-        category: dungeon,
-        subcategory: livid
-    })
-    lividEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: dungeon,
-        subcategory: livid
-    })
-    lividThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: dungeon,
-        subcategory: livid,
-        options: colorOptions,
-    })
-    lividColor = 1;
-    // Dungeon end
-
-    // The End start
-    @SwitchProperty({
-        name: enabled,
-        description: 'Used for summoning the Ender Dragon',
-        category: end,
-        subcategory: eye
-    })
-    eyeEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: end,
-        subcategory: eye
-    })
-    eyeThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: end,
-        subcategory: eye,
-        options: colorOptions,
-    })
-    eyeColor = 5;
-
-    // --------------------------------------
-
-    @SwitchProperty({
-        name: enabled,
-        description: 'Drops Summoning Eye',
-        category: end,
-        subcategory: zealot
-    })
-    zealotEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: end,
-        subcategory: zealot
-    })
-    zealotThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: end,
-        subcategory: zealot,
-        options: colorOptions,
-    })
-    zealotColor = 2;
-    // The End end
-
-    // The Farming Islands start
-    @SwitchProperty({
-        name: enabled,
-        description: 'Must be killed to complete Trevor The Trapper quests',
-        category: theFarmingIslands,
-        subcategory: trevor
-    })
-    trevorEnabled = true;
-
-    @SwitchProperty({
-        name: throughWall,
-        category: theFarmingIslands,
-        subcategory: trevor
-    })
-    trevorThroughWallEnabled = true;
-
-    @SelectorProperty({
-        name: color,
-        category: theFarmingIslands,
-        subcategory: trevor,
-        options: colorOptions,
-    })
-    trevorColor = 2;
-    // The Farming Islands end
+    giftRGBEnabled = false;
+    // Everywhere end
 
     // Hub start
     @SwitchProperty({
-        name: enabled,
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: Hub,
+        subcategory: SubGeneral
+    })
+    hubEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
         description: 'Drops Rat Pet',
-        category: hub,
-        subcategory: rat
+        category: Hub,
+        subcategory: Rat
     })
     ratEnabled = true;
 
     @SwitchProperty({
-        name: throughWall,
-        category: hub,
-        subcategory: rat
+        name: ThroughWall,
+        category: Hub,
+        subcategory: Rat
     })
     ratThroughWallEnabled = true;
 
-    @SelectorProperty({
-        name: color,
-        category: hub,
-        subcategory: rat,
-        options: colorOptions,
+    @ColorProperty({
+        name: ColorStr,
+        category: Hub,
+        subcategory: Rat,
+        allowAlpha: false
     })
-    ratColor = 2;
+    ratColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Hub,
+        subcategory: Rat
+    })
+    ratRGBEnabled = false;
     // Hub end
+
+    // Spider's Den start
+    @SwitchProperty({
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: SpidersDen,
+        subcategory: SubGeneral
+    })
+    spidersDenEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Slayer Boss',
+        category: SpidersDen,
+        subcategory: Father
+    })
+    fatherEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: SpidersDen,
+        subcategory: Father
+    })
+    fatherThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: SpidersDen,
+        subcategory: Father,
+        allowAlpha: false
+    })
+    fatherColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: SpidersDen,
+        subcategory: Father
+    })
+    fatherRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Slayer Mini-Boss',
+        category: SpidersDen,
+        subcategory: Mutant
+    })
+    mutantEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: SpidersDen,
+        subcategory: Mutant
+    })
+    mutantThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: SpidersDen,
+        subcategory: Mutant,
+        allowAlpha: false
+    })
+    mutantColor = new Color(1, 0, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: SpidersDen,
+        subcategory: Mutant
+    })
+    mutantRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Arachne Keeper Fragment',
+        category: SpidersDen,
+        subcategory: Keeper
+    })
+    keeperEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: SpidersDen,
+        subcategory: Keeper
+    })
+    keeperThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: SpidersDen,
+        subcategory: Keeper,
+        allowAlpha: false
+    })
+    keeperColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: SpidersDen,
+        subcategory: Keeper
+    })
+    keeperRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Spider Talisman',
+        category: SpidersDen,
+        subcategory: Mother
+    })
+    motherEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: SpidersDen,
+        subcategory: Mother
+    })
+    motherThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: SpidersDen,
+        subcategory: Mother,
+        allowAlpha: false
+    })
+    motherColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: SpidersDen,
+        subcategory: Mother
+    })
+    motherRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Summoned Boss',
+        category: SpidersDen,
+        subcategory: Arachne
+    })
+    arachneEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: SpidersDen,
+        subcategory: Arachne
+    })
+    arachneThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: SpidersDen,
+        subcategory: Arachne,
+        allowAlpha: false
+    })
+    arachneColor = new Color(1, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: SpidersDen,
+        subcategory: Arachne
+    })
+    arachneRGBEnabled = false;
+    // Spider's Den end
+
+    // The End start
+    @SwitchProperty({
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: End,
+        subcategory: SubGeneral
+    })
+    endEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Used for summoning the Ender Dragon',
+        category: End,
+        subcategory: Eye
+    })
+    eyeEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: End,
+        subcategory: Eye
+    })
+    eyeThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: End,
+        subcategory: Eye,
+        allowAlpha: false
+    })
+    eyeColor = new Color(1, 0, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: End,
+        subcategory: Eye
+    })
+    eyeRGBEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Summoning Eye',
+        category: End,
+        subcategory: Zealot
+    })
+    zealotEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: End,
+        subcategory: Zealot
+    })
+    zealotThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: End,
+        subcategory: Zealot,
+        allowAlpha: false
+    })
+    zealotColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: End,
+        subcategory: Zealot
+    })
+    zealotRGBEnabled = true;
+    // The End end
+
+    // Dwarven Mines start
+    @SwitchProperty({
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: DwarvenMines,
+        subcategory: SubGeneral
+    })
+    dwarvenMinesEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops 60 Mithril Powder per hit',
+        category: DwarvenMines,
+        subcategory: PowderGhast
+    })
+    powderGhastEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: DwarvenMines,
+        subcategory: PowderGhast
+    })
+    powderGhastThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: DwarvenMines,
+        subcategory: PowderGhast,
+        allowAlpha: false
+    })
+    powderGhastColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: DwarvenMines,
+        subcategory: PowderGhast
+    })
+    powderGhastRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Spawns during Goblin Raid',
+        category: DwarvenMines,
+        subcategory: Superprotectron
+    })
+    superprotectronEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: DwarvenMines,
+        subcategory: Superprotectron
+    })
+    superprotectronThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: DwarvenMines,
+        subcategory: Superprotectron,
+        allowAlpha: false
+    })
+    superprotectronColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: DwarvenMines,
+        subcategory: Superprotectron
+    })
+    superprotectronRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Shot arrows as long as the Powder Ghast lives',
+        category: DwarvenMines,
+        subcategory: Arrow
+    })
+    arrowEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: DwarvenMines,
+        subcategory: Arrow
+    })
+    arrowThroughWallEnabled = false;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: DwarvenMines,
+        subcategory: Arrow,
+        allowAlpha: false
+    })
+    arrowColor = new Color(1, 1, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: DwarvenMines,
+        subcategory: Arrow
+    })
+    arrowRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Sorrow',
+        category: DwarvenMines,
+        subcategory: Ghost
+    })
+    ghostEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: DwarvenMines,
+        subcategory: Ghost
+    })
+    ghostThroughWallEnabled = false;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: DwarvenMines,
+        subcategory: Ghost,
+        allowAlpha: false
+    })
+    ghostColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: DwarvenMines,
+        subcategory: Ghost
+    })
+    ghostRGBEnabled = false;
+    // Dwarven Mines end
+
+    // The Farming Islands start
+    @SwitchProperty({
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: FarmingIslands,
+        subcategory: SubGeneral
+    })
+    farmingIslandsEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Must be killed to complete Trevor The Trapper quests',
+        category: FarmingIslands,
+        subcategory: Trevor
+    })
+    trevorEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: FarmingIslands,
+        subcategory: Trevor
+    })
+    trevorThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: FarmingIslands,
+        subcategory: Trevor,
+        allowAlpha: false
+    })
+    trevorColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: FarmingIslands,
+        subcategory: Trevor
+    })
+    trevorRGBEnabled = false;
+    // The Farming Islands end
+
+    // Dungeon start
+    @SwitchProperty({
+        name: Enabled,
+        description: SpecificPlaceDescription,
+        category: Dungeon,
+        subcategory: SubGeneral
+    })
+    dungeonEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Counts as a secret',
+        category: Dungeon,
+        subcategory: Bat
+    })
+    batEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: Dungeon,
+        subcategory: Bat
+    })
+    batThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: Dungeon,
+        subcategory: Bat,
+        allowAlpha: false
+    })
+    batColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Dungeon,
+        subcategory: Bat
+    })
+    batRGBEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Boss in Floor 1',
+        category: Dungeon,
+        subcategory: Bonzo
+    })
+    bonzoEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: Dungeon,
+        subcategory: Bonzo
+    })
+    bonzoThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: Dungeon,
+        subcategory: Bonzo,
+        allowAlpha: false
+    })
+    bonzoColor = new Color(0, 0, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Dungeon,
+        subcategory: Bonzo
+    })
+    bonzoRGBEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Boss in Floor 5',
+        category: Dungeon,
+        subcategory: Livid
+    })
+    lividEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: Dungeon,
+        subcategory: Livid
+    })
+    lividThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: Dungeon,
+        subcategory: Livid,
+        allowAlpha: false
+    })
+    lividColor = new Color(0, 0, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Dungeon,
+        subcategory: Livid
+    })
+    lividRGBEnabled = true;
+    // Dungeon end
 
     constructor() {
         this.initialize(this);
-        this.setCategoryDescription(general, categoryDescription);
-        this.setSubcategoryDescription(general, general, 'May cause lags - especially in the lobby.');
-        this.setCategoryDescription(spidersDen, categoryDescription);
-        this.setCategoryDescription(dwarvenMines, categoryDescription);
-        this.setCategoryDescription(dungeon, categoryDescription);
-        this.setCategoryDescription(end, categoryDescription);
-        this.setCategoryDescription(theFarmingIslands, categoryDescription);
-        this.setCategoryDescription(hub, categoryDescription);
+        this.setCategoryDescription(General, CategoryDescription);
+        this.setSubcategoryDescription(General, General, 'May cause lags - especially in the Hub.');
+        this.setCategoryDescription(Everywhere, CategoryDescription);
+        this.setCategoryDescription(Hub, CategoryDescription);
+        this.setCategoryDescription(SpidersDen, CategoryDescription);
+        this.setCategoryDescription(End, CategoryDescription);
+        this.setCategoryDescription(DwarvenMines, CategoryDescription);
+        this.setCategoryDescription(FarmingIslands, CategoryDescription);
+        this.setCategoryDescription(Dungeon, CategoryDescription);
     }
 }
 
