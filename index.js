@@ -18,7 +18,7 @@ const EntityArrow = Java.type('net.minecraft.entity.projectile.EntityArrow');
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
 
-const Keybind = new KeyBind('Open SkyBlock Menu', 35, 'MiddleClickSBMenu');
+const Keybind = new KeyBind('Toggle module', 35, 'Hackboxes');
 const ModuleName = 'Hackboxes';
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
 const BreakLine = '\n';
@@ -94,6 +94,8 @@ register('tick', () => {
 	strings = stringnew;
 	boxesnew = [];
 	stringnew = [];
+	isPowderGhast = false;
+	lividList = [];
 });
 
 function renderHub(entity, mcEntity, entityName) {
@@ -154,7 +156,6 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 	if (Settings.ghostEnabled && Player.getY() <= 105 && mcEntity instanceof EntityCreeper) {
 		boxesnew.push([entity, Settings.ghostColor, Settings.ghostRGBEnabled, 1, 1, 2, 0, Settings.ghostThroughWallEnabled]);
 	}
-	isPowderGhast = false;
 }
 
 function renderTheFarmingIslands(entity, mcEntity, entityName) {
@@ -190,7 +191,6 @@ function renderDungeon(entity, mcEntity, entityName) {
 				break;
 		}
 	}
-	lividList = [];
 }
 
 function toggleModule() {
@@ -243,8 +243,8 @@ function transformColor(color) {
 }
 
 function getSkullOwner(mcEntity) {
-	const Item = new Item(mcEntity.func_92059_d()); // getEntityItem()
-	const NbtData = Item.getNBT();
+	const ItemStr = new Item(mcEntity.func_92059_d()); // getEntityItem()
+	const NbtData = ItemStr.getNBT();
 	const SkullOwner = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id').toString();
 	return SkullOwner.replace(/"/g, '');
 }
@@ -327,11 +327,7 @@ function updateMessage() {
 		const MessageStr = new Message(
 			StartSeparator,
 			`${Color.DARK_GREEN}Changelog:${BreakLine}`,
-			`${Color.GRAY}● ${Color.GREEN}added keybind to toggle module (Default is H)${BreakLine}`,
-      		`${Color.GRAY}● ${Color.GREEN}added possibility to choose more colors${BreakLine}`,
-			`${Color.GRAY}● ${Color.GREEN}added possibility to choose animated RGB color${BreakLine}`,
-			`${Color.GRAY}● ${Color.GREEN}added possibility to toggle each area for itself${BreakLine}`,
-			`${Color.GRAY}● ${Color.GREEN}added gifts${BreakLine}${BreakLine}`,
+			`${Color.GRAY}● ${Color.GREEN}fixed many bugs${BreakLine}${BreakLine}`,
 			`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${BreakLine}`,
 			new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${BreakLine}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 			EndSeparator
