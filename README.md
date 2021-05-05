@@ -1,7 +1,7 @@
 # Hackboxes
 
 Hackboxes is a module that was developed for the Mod ChatTriggers (Minecraft).  
-The purpose of these modules is to frame significant mobs with a border.
+The purpose of these modules is to frame significant mobs on Hypixel Skyblock with a border.
 
 ## Installation Guide
 
