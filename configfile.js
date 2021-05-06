@@ -29,6 +29,7 @@ const Mother = 'Brood Mother';
 const Arachne = 'Arachne';
 const Eye = 'Summoning Eye';
 const Zealot = 'Special Zealot';
+const Dragon = 'Ender Dragon';
 const PowderGhast = 'Powder Ghast';
 const Superprotectron = 'Superprotectron';
 const Arrow = 'Arrow';
@@ -384,6 +385,38 @@ class Settings {
         subcategory: Zealot
     })
     zealotRGBEnabled = true;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Summoned Boss',
+        category: End,
+        subcategory: Dragon
+    })
+    dragonEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: End,
+        subcategory: Dragon
+    })
+    dragonThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: End,
+        subcategory: Dragon,
+        allowAlpha: false
+    })
+    dragonColor = new Color(1, 1, 1);
+
+    @SwitchProperty({
+        name: RGB,
+        category: End,
+        subcategory: Dragon
+    })
+    dragonRGBEnabled = false;
     // The End end
 
     // Dwarven Mines start

@@ -15,6 +15,7 @@ const EntityCreeper = Java.type('net.minecraft.entity.monster.EntityCreeper');
 const EntityBat = Java.type('net.minecraft.entity.passive.EntityBat');
 const EntityItem = Java.type('net.minecraft.entity.item.EntityItem');
 const EntityArrow = Java.type('net.minecraft.entity.projectile.EntityArrow');
+const EntityDragon = Java.type('net.minecraft.entity.boss.EntityDragon');
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
 
@@ -137,6 +138,11 @@ function renderTheEnd(entity, mcEntity, entityName) {
 			boxesnew.push([entity, Settings.zealotColor, Settings.zealotRGBEnabled, 5, 1.5, -3, 0, Settings.zealotThroughWallEnabled]);
 		}
 	}
+	if (mcEntity instanceof EntityDragon) {
+		if (Settings.dragonEnabled) {
+			boxesnew.push([entity, Settings.dragonColor, Settings.dragonRGBEnabled, 5, 15, 8, 0, Settings.dragonThroughWallEnabled]);
+		}
+	}
 }
 
 function renderDwarvenMines(entity, mcEntity, entityName) {
@@ -245,7 +251,8 @@ function transformColor(color) {
 function getSkullOwner(mcEntity) {
 	const ItemStr = new Item(mcEntity.func_92059_d()); // getEntityItem()
 	const NbtData = ItemStr.getNBT();
-	const SkullOwner = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id').toString();
+	const NBTBase = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id');
+	const SkullOwner = NBTBase !== null ? NBTBase.toString() : '';
 	return SkullOwner.replace(/"/g, '');
 }
 
@@ -327,7 +334,8 @@ function updateMessage() {
 		const MessageStr = new Message(
 			StartSeparator,
 			`${Color.DARK_GREEN}Changelog:${BreakLine}`,
-			`${Color.GRAY}● ${Color.GREEN}fixed many bugs${BreakLine}${BreakLine}`,
+			`${Color.GRAY}● ${Color.GREEN}added Ender Dragon${BreakLine}`,
+			`${Color.GRAY}● ${Color.GREEN}fixed even many bugs${BreakLine}${BreakLine}`,
 			`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${BreakLine}`,
 			new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${BreakLine}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 			EndSeparator
@@ -344,13 +352,13 @@ function checkForUpdates() {
 		}).then(response => {
 			if (JSON.parse(JSON.stringify(response)).version !== Version) {
 				const Link = `https://github.com/Steinente/${ModuleName}/releases/latest`;
-				const Message = new Message(
+				const MessageStr = new Message(
 					StartSeparator,
 					`${Color.RED}New version available! Download at:`,
 					new TextComponent(`${Color.BLUE}${Link}${BreakLine}`).setClick('open_url', `${Link}`),
 					EndSeparator
 				);
-				ChatLib.chat(Message);
+				ChatLib.chat(MessageStr);
 			}
 		});
 	}
