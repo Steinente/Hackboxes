@@ -22,6 +22,7 @@ const ColorStr = 'Color';
 const RGB = 'RGB';
 const Gift = 'Gift';
 const Rat = 'Rat';
+const Inquisitor = 'Minos Inquisitor';
 const Father = 'Broodfather';
 const Mutant = 'Mutant Tarantula';
 const Keeper = 'Arachne\'s Keeper';
@@ -141,6 +142,38 @@ class Settings {
         subcategory: Rat
     })
     ratRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Chimera Book',
+        category: Hub,
+        subcategory: Inquisitor
+    })
+    inquisitorEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: Hub,
+        subcategory: Inquisitor
+    })
+    inquisitorThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: Hub,
+        subcategory: Inquisitor,
+        allowAlpha: false
+    })
+    inquisitorColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Hub,
+        subcategory: Inquisitor
+    })
+    inquisitorRGBEnabled = false;
     // Hub end
 
     // Spider's Den start
