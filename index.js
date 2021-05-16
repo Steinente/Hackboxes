@@ -5,6 +5,7 @@ import SkyblockUtilities from '../SkyblockUtilities/index';
 import Utils from '../SkyblockUtilities/utils/Utils';
 import MCEntity from '../SkyblockUtilities/enums/MCEntity';
 import Area from '../SkyblockUtilities/enums/Area';
+import Location from '../SkyblockUtilities/enums/Location';
 import Color from '../SkyblockUtilities/enums/Color';
 import Settings from './configfile';
 import FileUtilities from '../FileUtilities/main';
@@ -13,8 +14,8 @@ import request from '../requestV2/index';
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
 
-const Keybind = new KeyBind('Toggle module', 35, 'Hackboxes');
 const ModuleName = 'Hackboxes';
+const Keybind = new KeyBind('Toggle module', 35, ModuleName);
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
 const StartSeparator = `${Color.YELLOW}---------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}----------${Color.LINE_BREAK}`;
 const EndSeparator = `${Color.YELLOW}---------------------------------------`;
@@ -72,6 +73,9 @@ register('tick', () => {
 				if (Settings.giftEnabled && entityName.includes('CLICK TO OPEN')) {
 					boxesnew.push([entity, Settings.giftColor, Settings.giftRGBEnabled, 2, 1, 1, 1, Settings.giftThroughWallEnabled]);
 				}
+				if (Settings.jerryEnabled && Utils.containsAll(entityName, 'Jerry', 'Hit')) {
+					boxesnew.push([entity, Settings.jerryColor, Settings.jerryRGBEnabled, 2, 1, -2, 0, Settings.jerryThroughWallEnabled]);
+				}
 			}
 		});
 	}
@@ -117,7 +121,7 @@ function renderSpidersDen(entity, mcEntity, entityName) {
 		} else if (Settings.motherEnabled && entityName.includes('Mother')) {
 			stringnew.push([entity, 0.05]);
 			boxesnew.push([entity, Settings.motherColor, Settings.motherRGBEnabled, 5, 2, -1, 0, Settings.motherThroughWallEnabled]);
-		} else if (Settings.arachneEnabled && entityName.includes('Arachne') && !Utils.containsAll(entityName, 'Brood', 'Fragment')) {
+		} else if (Settings.arachneEnabled && entityName.includes('Arachne') && !entityName.includes('Brood') && !entityName.includes('Fragment')) {
 			stringnew.push([entity, 0.05]);
 			boxesnew.push([entity, Settings.arachneColor, Settings.arachneRGBEnabled, 5, 2, -1, 0, Settings.arachneThroughWallEnabled]);
 		}
@@ -125,18 +129,27 @@ function renderSpidersDen(entity, mcEntity, entityName) {
 }
 
 function renderTheEnd(entity, mcEntity, entityName) {
-	if (Settings.eyeEnabled && mcEntity instanceof MCEntity.ITEM && getSkullOwner(mcEntity) === SummoningEyeSkullOwner) {
-		boxesnew.push([entity, Settings.eyeColor, Settings.eyeRGBEnabled, 5, 0.5, 4, 0, Settings.eyeThroughWallEnabled]);
-	}
-	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
-		if (Settings.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
-			stringnew.push([entity, 0.1]);
-			boxesnew.push([entity, Settings.zealotColor, Settings.zealotRGBEnabled, 5, 1.5, -3, 0, Settings.zealotThroughWallEnabled]);
+	if (SkyblockUtilities.getLocation() === Location.DRAGONS_NEST) {
+		if (mcEntity instanceof MCEntity.ITEM) {
+			if (Settings.eyeEnabled && getSkullOwner(mcEntity) === SummoningEyeSkullOwner) {
+				boxesnew.push([entity, Settings.eyeColor, Settings.eyeRGBEnabled, 5, 0.5, 4, 0, Settings.eyeThroughWallEnabled]);
+			}
 		}
-	}
-	if (mcEntity instanceof MCEntity.DRAGON) {
-		if (Settings.dragonEnabled) {
-			boxesnew.push([entity, Settings.dragonColor, Settings.dragonRGBEnabled, 5, 15, 8, 0, Settings.dragonThroughWallEnabled]);
+		if (mcEntity instanceof MCEntity.ARMOR_STAND) {
+			if (Settings.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
+				stringnew.push([entity, 0.1]);
+				boxesnew.push([entity, Settings.zealotColor, Settings.zealotRGBEnabled, 5, 1.5, -3, 0, Settings.zealotThroughWallEnabled]);
+			}
+		}
+		if (mcEntity instanceof MCEntity.DRAGON) {
+			if (Settings.dragonEnabled) {
+				boxesnew.push([entity, Settings.dragonColor, Settings.dragonRGBEnabled, 5, 15, 8, 0, Settings.dragonThroughWallEnabled]);
+			}
+		}
+		if (mcEntity instanceof MCEntity.ENDER_CRYSTAL) {
+			if (Settings.crystalEnabled) {
+				boxesnew.push([entity, Settings.crystalColor, Settings.crystalRGBEnabled, 5, 1, 2, 0, Settings.crystalThroughWallEnabled]);
+			}
 		}
 	}
 }
@@ -149,14 +162,22 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 			boxesnew.push([entity, Settings.powderGhastColor, Settings.powderGhastRGBEnabled, 2, 4, -4, 0, Settings.powderGhastThroughWallEnabled]);
 		}
 	}
-	if (Settings.superprotectronEnabled && mcEntity instanceof MCEntity.IRON_GOLEM) {
-		boxesnew.push([entity, Settings.superprotectronColor, Settings.superprotectronRGBEnabled, 4, 1.7, 2.7, 0, Settings.superprotectronThroughWallEnabled]);
+	if (mcEntity instanceof MCEntity.IRON_GOLEM) {
+		if (Settings.superprotectronEnabled) {
+			boxesnew.push([entity, Settings.superprotectronColor, Settings.superprotectronRGBEnabled, 4, 1.7, 2.7, 0, Settings.superprotectronThroughWallEnabled]);
+		}
 	}
-	if (Settings.arrowEnabled && mcEntity instanceof MCEntity.ARROW && isPowderGhast) {
-		boxesnew.push([entity, Settings.arrowColor, Settings.arrowRGBEnabled, 0.5, 0.5, 0.5, 0, Settings.arrowThroughWallEnabled]);
+	if (mcEntity instanceof MCEntity.ARROW) {
+		if (Settings.arrowEnabled && isPowderGhast) {
+			boxesnew.push([entity, Settings.arrowColor, Settings.arrowRGBEnabled, 0.5, 0.5, 0.5, 0, Settings.arrowThroughWallEnabled]);
+		}
 	}
-	if (Settings.ghostEnabled && Player.getY() <= 105 && mcEntity instanceof MCEntity.CREEPER) {
-		boxesnew.push([entity, Settings.ghostColor, Settings.ghostRGBEnabled, 1, 1, 2, 0, Settings.ghostThroughWallEnabled]);
+	if (SkyblockUtilities.getLocation() === Location.THE_MIST) {
+		if (mcEntity instanceof MCEntity.CREEPER) {
+			if (Settings.ghostEnabled) {
+				boxesnew.push([entity, Settings.ghostColor, Settings.ghostRGBEnabled, 1, 1, 2, 0, Settings.ghostThroughWallEnabled]);
+			}
+		}
 	}
 }
 
@@ -171,8 +192,10 @@ function renderTheFarmingIslands(entity, mcEntity, entityName) {
 }
 
 function renderDungeon(entity, mcEntity, entityName) {
-	if (Settings.batEnabled && mcEntity instanceof MCEntity.BAT) {
-		boxesnew.push([entity, Settings.batColor, Settings.batRGBEnabled, 1, 0.5, 0.5, 0, Settings.batThroughWallEnabled]);
+	if (mcEntity instanceof MCEntity.BAT) {
+		if (Settings.batEnabled) {
+			boxesnew.push([entity, Settings.batColor, Settings.batRGBEnabled, 1, 0.5, 0.5, 0, Settings.batThroughWallEnabled]);
+		}
 	}
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		switch(SkyblockUtilities.getFloor()) {
@@ -330,8 +353,9 @@ function updateMessage() {
 		const MessageStr = new Message(
 			StartSeparator,
 			`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}added Minos Inquisitor${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}fixed Rat not working${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+			`${Color.GRAY}● ${Color.GREEN}added Jerry${Color.LINE_BREAK}`,
+			`${Color.GRAY}● ${Color.GREEN}added Ender Crystal${Color.LINE_BREAK}`,
+			`${Color.GRAY}● ${Color.GREEN}fixed Arachne bugs${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 			`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 			new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 			EndSeparator

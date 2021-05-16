@@ -1,10 +1,11 @@
 import { @Vigilant, @SwitchProperty, @ColorProperty } from 'Vigilance';
-const Color = Java.type('java.awt.Color');
+import Color from '../SkyblockUtilities/enums/Color';
+const JavaColor = Java.type('java.awt.Color');
 
 const ModuleName = 'Hackboxes';
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
 
-const CategoryDescription = `&c${ModuleName} &7v${Version} by &6Steinente &7/ &6EnteStein`;
+const CategoryDescription = `${Color.GREEN}${ModuleName} ${Color.GRAY}v${Version} by ${Color.GOLD}Steinente ${Color.GRAY}/ ${Color.GOLD}EnteStein`;
 const SpecificPlaceDescription = 'Creates borders around significant entities at the specific place';
 const General = 'General';
 const SubGeneral = ' General ';
@@ -21,6 +22,7 @@ const ThroughWall = 'Through Wall';
 const ColorStr = 'Color';
 const RGB = 'RGB';
 const Gift = 'Gift';
+const Jerry = 'Jerry';
 const Rat = 'Rat';
 const Inquisitor = 'Minos Inquisitor';
 const Father = 'Broodfather';
@@ -31,6 +33,7 @@ const Arachne = 'Arachne';
 const Eye = 'Summoning Eye';
 const Zealot = 'Special Zealot';
 const Dragon = 'Ender Dragon';
+const Crystal = 'Ender Crystal';
 const PowderGhast = 'Powder Ghast';
 const Superprotectron = 'Superprotectron';
 const Arrow = 'Arrow';
@@ -40,7 +43,7 @@ const Bat = 'Bat';
 const Bonzo = 'Bonzo';
 const Livid = 'Livid';
 
-@Vigilant('Hackboxes')
+@Vigilant(ModuleName)
 class Settings {
 
     // General start
@@ -92,7 +95,7 @@ class Settings {
         subcategory: Gift,
         allowAlpha: false
     })
-    giftColor = new Color(0, 1, 0);
+    giftColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -100,6 +103,38 @@ class Settings {
         subcategory: Gift
     })
     giftRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Jerry Box',
+        category: Everywhere,
+        subcategory: Jerry
+    })
+    jerryEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: Everywhere,
+        subcategory: Jerry
+    })
+    jerryThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: Everywhere,
+        subcategory: Jerry,
+        allowAlpha: false
+    })
+    jerryColor = new JavaColor(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: Everywhere,
+        subcategory: Jerry
+    })
+    jerryRGBEnabled = false;
     // Everywhere end
 
     // Hub start
@@ -134,7 +169,7 @@ class Settings {
         subcategory: Rat,
         allowAlpha: false
     })
-    ratColor = new Color(0, 1, 0);
+    ratColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -166,7 +201,7 @@ class Settings {
         subcategory: Inquisitor,
         allowAlpha: false
     })
-    inquisitorColor = new Color(1, 0, 0);
+    inquisitorColor = new JavaColor(1, 0, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -208,7 +243,7 @@ class Settings {
         subcategory: Father,
         allowAlpha: false
     })
-    fatherColor = new Color(1, 0, 0);
+    fatherColor = new JavaColor(1, 0, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -240,7 +275,7 @@ class Settings {
         subcategory: Mutant,
         allowAlpha: false
     })
-    mutantColor = new Color(1, 0, 1);
+    mutantColor = new JavaColor(1, 0, 1);
 
     @SwitchProperty({
         name: RGB,
@@ -272,7 +307,7 @@ class Settings {
         subcategory: Keeper,
         allowAlpha: false
     })
-    keeperColor = new Color(0, 1, 0);
+    keeperColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -304,7 +339,7 @@ class Settings {
         subcategory: Mother,
         allowAlpha: false
     })
-    motherColor = new Color(0, 1, 0);
+    motherColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -336,7 +371,7 @@ class Settings {
         subcategory: Arachne,
         allowAlpha: false
     })
-    arachneColor = new Color(1, 1, 0);
+    arachneColor = new JavaColor(1, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -378,7 +413,7 @@ class Settings {
         subcategory: Eye,
         allowAlpha: false
     })
-    eyeColor = new Color(1, 0, 1);
+    eyeColor = new JavaColor(1, 0, 1);
 
     @SwitchProperty({
         name: RGB,
@@ -410,7 +445,7 @@ class Settings {
         subcategory: Zealot,
         allowAlpha: false
     })
-    zealotColor = new Color(0, 1, 0);
+    zealotColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -442,7 +477,7 @@ class Settings {
         subcategory: Dragon,
         allowAlpha: false
     })
-    dragonColor = new Color(1, 1, 1);
+    dragonColor = new JavaColor(1, 1, 1);
 
     @SwitchProperty({
         name: RGB,
@@ -450,6 +485,38 @@ class Settings {
         subcategory: Dragon
     })
     dragonRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Enabled,
+        description: 'Drops Crystal Fragment',
+        category: End,
+        subcategory: Crystal
+    })
+    crystalEnabled = true;
+
+    @SwitchProperty({
+        name: ThroughWall,
+        category: End,
+        subcategory: Crystal
+    })
+    crystalThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: ColorStr,
+        category: End,
+        subcategory: Crystal,
+        allowAlpha: false
+    })
+    crystalColor = new JavaColor(0, 1, 0);
+
+    @SwitchProperty({
+        name: RGB,
+        category: End,
+        subcategory: Crystal
+    })
+    crystalRGBEnabled = true;
     // The End end
 
     // Dwarven Mines start
@@ -484,7 +551,7 @@ class Settings {
         subcategory: PowderGhast,
         allowAlpha: false
     })
-    powderGhastColor = new Color(1, 0, 0);
+    powderGhastColor = new JavaColor(1, 0, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -516,7 +583,7 @@ class Settings {
         subcategory: Superprotectron,
         allowAlpha: false
     })
-    superprotectronColor = new Color(1, 0, 0);
+    superprotectronColor = new JavaColor(1, 0, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -548,7 +615,7 @@ class Settings {
         subcategory: Arrow,
         allowAlpha: false
     })
-    arrowColor = new Color(1, 1, 1);
+    arrowColor = new JavaColor(1, 1, 1);
 
     @SwitchProperty({
         name: RGB,
@@ -580,7 +647,7 @@ class Settings {
         subcategory: Ghost,
         allowAlpha: false
     })
-    ghostColor = new Color(0, 1, 0);
+    ghostColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -622,7 +689,7 @@ class Settings {
         subcategory: Trevor,
         allowAlpha: false
     })
-    trevorColor = new Color(0, 1, 0);
+    trevorColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -664,7 +731,7 @@ class Settings {
         subcategory: Bat,
         allowAlpha: false
     })
-    batColor = new Color(0, 1, 0);
+    batColor = new JavaColor(0, 1, 0);
 
     @SwitchProperty({
         name: RGB,
@@ -696,7 +763,7 @@ class Settings {
         subcategory: Bonzo,
         allowAlpha: false
     })
-    bonzoColor = new Color(0, 0, 1);
+    bonzoColor = new JavaColor(0, 0, 1);
 
     @SwitchProperty({
         name: RGB,
@@ -728,7 +795,7 @@ class Settings {
         subcategory: Livid,
         allowAlpha: false
     })
-    lividColor = new Color(0, 0, 1);
+    lividColor = new JavaColor(0, 0, 1);
 
     @SwitchProperty({
         name: RGB,
