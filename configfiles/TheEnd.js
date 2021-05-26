@@ -123,6 +123,38 @@ class TheEnd {
 
     @SwitchProperty({
         name: Setting.Enabled,
+        description: 'Slayer Boss',
+        category: Setting.Slayer,
+        subcategory: Setting.Slayer
+    })
+    slayerEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Slayer,
+        subcategory: Setting.Slayer
+    })
+    slayerThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Slayer,
+        subcategory: Setting.Slayer,
+        allowAlpha: false
+    })
+    slayerColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Slayer,
+        subcategory: Setting.Slayer
+    })
+    slayerRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
         description: 'Summoned Boss',
         category: Setting.Dragon,
         subcategory: Setting.Dragon
