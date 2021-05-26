@@ -27,8 +27,8 @@ const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager')
 const ModuleName = 'Hackboxes';
 const Keybind = new KeyBind('Toggle module', 35, ModuleName);
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
-const StartSeparator = `${Color.YELLOW}---------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}----------${Color.LINE_BREAK}`;
-const EndSeparator = `${Color.YELLOW}---------------------------------------`;
+const StartSeparator = `${Color.YELLOW}-------------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}--------------${Color.LINE_BREAK}`;
+const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
 const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'Elusive'];
 
@@ -165,7 +165,7 @@ function renderHub(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Hub.revenantEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Horror')) {
 			stringnew.push([entity, 0.05]);
-			boxesnew.push([entity, Hub.packmasterColor, Hub.packmasterRGBEnabled, 5, 1, -2, 0, Hub.packmasterThroughWallEnabled]);
+			boxesnew.push([entity, Hub.revenantColor, Hub.revenantRGBEnabled, 5, 1, -2, 0, Hub.revenantThroughWallEnabled]);
 		} else if (Hub.atonedRevEnabled && entityName.includes('Atoned Revenant')) {
 			stringnew.push([entity, 0.05]);
 			boxesnew.push([entity, Hub.atonedRevColor, Hub.atonedRevRGBEnabled, 5, 1, -2, 0, Hub.atonedRevThroughWallEnabled]);
@@ -219,7 +219,7 @@ function renderSpidersDen(entity, mcEntity, entityName) {
 		} else if (SpidersDen.mutantEnabled && entityName.includes('Mutant')) {
 			stringnew.push([entity, 0.05]);
 			boxesnew.push([entity, SpidersDen.mutantColor, SpidersDen.mutantRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.mutantThroughWallEnabled]);
-		} else if (SpidersDen.beastEnabled && entityName.includes('Beast')) {
+		} else if (SpidersDen.beastEnabled && entityName.includes('Beast') && !entityName.includes('Bramass')) {
 			stringnew.push([entity, 0.05]);
 			boxesnew.push([entity, SpidersDen.beastColor, SpidersDen.beastRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.beastThroughWallEnabled]);
 		} else if (SpidersDen.verminEnabled && entityName.includes('Vermin')) {
@@ -380,7 +380,7 @@ function transformColor(color) {
 }
 
 function getSkullOwner(mcEntity) {
-	const ItemStr = new Item(mcEntity.func_92059_d()); // getMCEntity.ITEM()
+	const ItemStr = new Item(mcEntity.func_92059_d()); // getEntityItem()
 	const NbtData = ItemStr.getNBT();
 	const NBTBase = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id');
 	const SkullOwner = NBTBase !== null ? NBTBase.toString() : '';
@@ -460,34 +460,17 @@ const drawNameThroughWalls = (entity, scale) => {
 
 function updateMessage() {
 	const NewVersion = `${Config.modulesFolder}/${ModuleName}/updates/${Version}`;
-	if (!FileUtilities.exists(NewVersion)) {
-		FileUtilities.newFile(NewVersion);
-		const Entities =
-			`${Color.GRAY}● ${Color.GOLD}Tarantula Vermin${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Tarantula Beast${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Arachne\'s Brood${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Pack Enforcer${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Sven Follower${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Sven Alpha${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Sven Packmaster${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Revenant Sycophant${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Revenant Champion${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Deformed Revenant${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Atoned Champion${Color.LINE_BREAK}` +
-			`${Color.GRAY}● ${Color.GOLD}Atoned Revenant`;
-		const MessageStr = new Message(
-			StartSeparator,
-			`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}fixed Spider Hitboxes to original size${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}added Enderman Slayer + Mini Boss (future Slayer)${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}revised settings (/hackboxes help)${Color.LINE_BREAK}`,
-			`${Color.GRAY}● ${Color.GREEN}added a lot of entities `, new TextComponent(`${Color.GREEN + Color.ITALIC}[HOVER]`).setHoverValue(Entities), `${Color.LINE_BREAK}${Color.LINE_BREAK}`,
-			`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
-			new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
-			EndSeparator
-		);
-		ChatLib.chat(MessageStr);
-	}
+	if (FileUtilities.exists(NewVersion)) return;
+	FileUtilities.newFile(NewVersion);
+	const MessageStr = new Message(
+		StartSeparator,
+		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed some bugs${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
+		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
+		EndSeparator
+	);
+	ChatLib.chat(MessageStr);
 }
 
 function checkForUpdates() {
