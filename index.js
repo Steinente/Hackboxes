@@ -23,10 +23,14 @@ import Dungeon from './configfiles/Dungeon';
 
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
+const MCWorld = Java.type('net.minecraft.world.World');
 
 const ModuleName = 'Hackboxes';
-const Keybind = new KeyBind('Toggle module', 35, ModuleName);
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
+const Latest = `https://github.com/Steinente/${ModuleName}/releases/latest`;
+const ClickableLatest = new TextComponent(`${Color.BLUE}${Latest}`).setClick('open_url', `${Latest}`);
+const ToggleModuleKeybind = new KeyBind('Toggle module', 35, ModuleName);
+const ToggleRequiredMobsKeybind = new KeyBind('Toggle required dungeon mobs', 19, ModuleName);
 const StartSeparator = `${Color.YELLOW}-------------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}--------------${Color.LINE_BREAK}`;
 const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
@@ -35,9 +39,9 @@ const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'El
 let rgb = [1, 0, 0];
 let boxes = [];
 let strings = [];
+let blocks = [];
 let boxesnew = [];
 let stringnew = [];
-let lividList = [];
 let isPowderGhast = false;
 let AreaVisibility = {};
 
@@ -60,17 +64,21 @@ register('step', () => {
 
 register('renderWorld', ticks => {
 	if (!General.enabled) return;
-	boxes.forEach(render => {
-		drawBox(...render, ticks);
-	});
-	strings.forEach(render => {
-		drawNameThroughWalls(...render, ticks);
-	});
+	boxes.forEach(render => drawBoxAroundEntity(...render, ticks));
+	strings.forEach(render => drawNameThroughWalls(...render));
+	blocks.forEach(render => drawBoxAroundBlock(...render));
 });
 
-// TODO: String not through the wall
+register('worldUnload', () => {
+	boxesnew = [];
+	stringnew = [];
+	blocks = [];
+	isPowderGhast = false;
+	lividList = [];
+});
+
 register('tick', () => {
-	toggleModule();
+	checkKeybinds();
 	if (!General.enabled) return;
 	let allEntities = [];
 	rgbChange();
@@ -106,6 +114,23 @@ register('tick', () => {
 	lividList = [];
 });
 
+register('soundPlay', (position, name) => {
+	if (AreaVisibility[Area.THE_END] && !TheEnd.glyphEnabled) return;
+	const block = [[position.getX(), position.getY(), position.getZ()], TheEnd.glyphColor, TheEnd.glyphRGBEnabled, 5, 1, 3, 0, TheEnd.glyphThroughWallEnabled];
+	if (name.includes('game.neutral.hurt')) {
+		blocks.push(block);
+		setTimeout(() => removeBlock(position), 10000);
+	}
+	if (name.includes('random.break')) {
+		removeBlock(position);
+	}
+});
+
+function removeBlock(position) {
+	const blocksnew = blocks.filter(e => e[0][0] !== position.getX() && e[0][1] !== position.getY() && e[0][2] !== position.getZ());
+	blocks = blocksnew;
+}
+
 function command(args) {
 	if (args[0] === undefined) {
 		General.openGUI();
@@ -136,6 +161,12 @@ function command(args) {
 			case 'dungeon':
 				Dungeon.openGUI();
 				break;
+			case 'changelog':
+				sendChangelog();
+				break;
+			case 'download':
+				ClickableLatest.chat();
+				break;
 			case 'help':
 			default:
 				const Areas = 
@@ -152,6 +183,8 @@ function command(args) {
 					`${Color.AQUA}/hackboxes ${Color.GRAY + Color.ITALIC}- Opens the settings${Color.LINE_BREAK}`,
 					`${Color.AQUA}/hb ${Color.GRAY + Color.ITALIC}- Alias for /hackboxes${Color.LINE_BREAK}`,
 					`${Color.AQUA}/hackboxes `, new TextComponent(`${Color.AQUA + Color.ITALIC}[AREA]`).setHoverValue(Areas), ` - ${Color.GRAY + Color.ITALIC}Opens the settings in specific area${Color.LINE_BREAK}`,
+					`${Color.AQUA}/hackboxes changelog ${Color.GRAY + Color.ITALIC}- Shows last changelog${Color.LINE_BREAK}`,
+					`${Color.AQUA}/hackboxes download ${Color.GRAY + Color.ITALIC}- Link to latest download${Color.LINE_BREAK}`,
 					`${Color.AQUA}/hackboxes help ${Color.GRAY + Color.ITALIC}- Displays this help dialog`,
 					EndSeparator
 				);
@@ -249,13 +282,7 @@ function renderTheEnd(entity, mcEntity, entityName) {
 		} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 			if (TheEnd.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
 				stringnew.push([entity, 0.1]);
-				boxesnew.push([entity, TheEnd.zealotColor, TheEnd.zealotRGBEnabled, 5, 1.5, -3, 0, TheEnd.zealotThroughWallEnabled]);
-			} else if (TheEnd.fanaticEnabled && entityName.includes('Fanatic')) {
-				stringnew.push([entity, 0.1]);
-				boxesnew.push([entity, TheEnd.fanaticColor, TheEnd.fanaticRGBEnabled, 5, 1.5, -3, 0, TheEnd.fanaticThroughWallEnabled]);
-			} else if (TheEnd.slayerEnabled && entityName.includes(SBSymbol.SLAYER)) {
-				stringnew.push([entity, 0.1]);
-				boxesnew.push([entity, TheEnd.slayerColor, TheEnd.slayerRGBEnabled, 5, 1.5, -3, 0, TheEnd.slayerThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd.zealotColor, TheEnd.zealotRGBEnabled, 5, 1, -3, 0, TheEnd.zealotThroughWallEnabled]);
 			}
 		} else if (mcEntity instanceof MCEntity.DRAGON) {
 			if (TheEnd.dragonEnabled) {
@@ -265,6 +292,15 @@ function renderTheEnd(entity, mcEntity, entityName) {
 			if (TheEnd.crystalEnabled) {
 				boxesnew.push([entity, TheEnd.crystalColor, TheEnd.crystalRGBEnabled, 5, 1, 2, 0, TheEnd.crystalThroughWallEnabled]);
 			}
+		}
+	}
+	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
+		if (TheEnd.seraphEnabled && entityName.includes(SBSymbol.SLAYER)) {
+			stringnew.push([entity, 0.1]);
+			boxesnew.push([entity, TheEnd.seraphColor, TheEnd.seraphRGBEnabled, 5, 1, -3, 0, TheEnd.seraphThroughWallEnabled]);
+		} else if (TheEnd.devoteeEnabled && entityName.includes('Devotee')) {
+			stringnew.push([entity, 0.1]);
+			boxesnew.push([entity, TheEnd.devoteeColor, TheEnd.devoteeRGBEnabled, 5, 1, -3, 0, TheEnd.devoteeThroughWallEnabled]);
 		}
 	}
 }
@@ -310,6 +346,11 @@ function renderDungeon(entity, mcEntity, entityName) {
 			boxesnew.push([entity, Dungeon.batColor, Dungeon.batRGBEnabled, 1, 0.5, 0.5, 0, Dungeon.batThroughWallEnabled]);
 		}
 	} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
+		if (Dungeon.felsEnabled && Utils.containsAll(entityName, 'Fels', SBSymbol.REQUIRE_STAR)) {
+			boxesnew.push([entity, Dungeon.felsColor, Dungeon.felsRGBEnabled, 3, 1, -3, 0, Dungeon.felsThroughWallEnabled]);
+		} else if (Dungeon.requiredEnabled && Utils.containsOne(entityName, SBSymbol.REQUIRE_STAR, 'Shadow Assassin', 'Lost Adventurer', 'Angry Archaeologist')) {
+			boxesnew.push([entity, Dungeon.requiredColor, Dungeon.requiredRGBEnabled, 2, 1, -2, 0, Dungeon.requiredThroughWallEnabled]);
+		}
 		switch(SkyblockUtilities.getFloor()) {
 			case 1:
 				if (Dungeon.bonzoEnabled && entityName.includes('Bonzo')) {
@@ -317,10 +358,9 @@ function renderDungeon(entity, mcEntity, entityName) {
 				}
 				break;
 			case 5:
-				if (Dungeon.lividEnabled && entityName.includes('Livid') && entityName.length > 5 && entityName.charAt(1) === entityName.charAt(5) && !lividList.includes(entity)) {
-					lividList.push(entity);
-					if (lividList.length === 9) {
-						boxesnew.push([lividList[0], Dungeon.lividColor, Dungeon.lividRGBEnabled, 3, 1, -2, 0, Dungeon.lividThroughWallEnabled]);
+				if (Dungeon.lividEnabled && entityName.includes('Livid')) {
+					if (entity.getName().charAt(1) === getLividColor().charAt(1)) {
+						boxesnew.push([entity, Dungeon.lividColor, Dungeon.lividRGBEnabled, 3, 1, -2, 0, Dungeon.lividThroughWallEnabled]);
 					}
 				}
 				break;
@@ -330,11 +370,43 @@ function renderDungeon(entity, mcEntity, entityName) {
 	}
 }
 
-function toggleModule() {
-	if (Keybind.isPressed()) {
-        General.enabled = !General.enabled;
-		ChatLib.chat(`${Color.GRAY}[${Color.GOLD}${ModuleName}${Color.GRAY}] ${General.enabled ? Color.GREEN + 'Enabled' : Color.RED + 'Disabled'} ${Color.GRAY}module!`);
+function getLividColor() {
+	switch(World.getBlockAt(205, 108, 242).getMetadata()) {
+		case 0:
+			return Color.WHITE;
+		case 4:
+			return Color.YELLOW;
+		case 5:
+			return Color.GREEN;
+		case 6:
+			return Color.LIGHT_PURPLE;
+		case 7:
+			return Color.GRAY;
+		case 10:
+			return Color.DARK_PURPLE;
+		case 11:
+			return Color.BLUE;
+		case 13:
+			return Color.DARK_GREEN;
+		case 14:
+			return Color.RED;
+		default:
+			return Color.MAGIC;
 	}
+}
+
+function checkKeybinds() {
+	if (ToggleModuleKeybind.isPressed()) {
+		General.enabled = !General.enabled;
+		sendToggleMessage('module', General.enabled);
+	} else if (ToggleRequiredMobsKeybind.isPressed()) {
+		Dungeon.requiredEnabled = !Dungeon.requiredEnabled;
+		sendToggleMessage('required mobs', Dungeon.requiredEnabled);
+	}
+}
+
+function sendToggleMessage(setting, bool) {
+	ChatLib.chat(`${Color.GRAY}[${Color.GOLD}${ModuleName}${Color.GRAY}] ${bool ? Color.GREEN + 'Enabled' : Color.RED + 'Disabled'} ${Color.GRAY + setting}!`);
 }
 
 function rgbChange() {
@@ -371,10 +443,6 @@ function rgbChange() {
     }
 }
 
-function getColor(color) {
-	return [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
-}
-
 function transformColor(color) {
 	return (1 / 255 * color).toFixed(2);
 }
@@ -387,7 +455,7 @@ function getSkullOwner(mcEntity) {
 	return SkullOwner.replace(/"/g, '');
 }
 
-const drawBox = (entity, color, isRGB, lineWidth, width, height, expandY, throughWall, partialTicks) => {
+function drawBoxAroundEntity(entity, color, isRGB, lineWidth, width, height, expandY, throughWall, partialTicks) {
 	GL11.glBlendFunc(770, 771);
 	GL11.glEnable(GL11.GL_BLEND);
 	GL11.glLineWidth(lineWidth);
@@ -423,12 +491,7 @@ const drawBox = (entity, color, isRGB, lineWidth, width, height, expandY, throug
 		[-0.5, 0.0, 0.5]
 	];
 
-	let colors = [];
-	if (isRGB) {
-		colors = [rgb[0], rgb[1], rgb[2]];
-	} else {
-		colors = getColor(color);
-	}
+	const colors = isRGB ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
 	let counter = 0;
 	Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
 	positions.forEach(pos => {
@@ -454,23 +517,78 @@ const drawBox = (entity, color, isRGB, lineWidth, width, height, expandY, throug
 	GL11.glDisable(GL11.GL_BLEND);
 }
 
-const drawNameThroughWalls = (entity, scale) => {
-  Tessellator.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), Renderer.WHITE, false, scale, false);
+function drawBoxAroundBlock(position, color, isRGB, lineWidth, width, height, expandY, throughWall) {
+	GL11.glBlendFunc(770, 771);
+	GL11.glEnable(GL11.GL_BLEND);
+	GL11.glLineWidth(lineWidth);
+	GL11.glDisable(GL11.GL_TEXTURE_2D);
+	if (throughWall) GL11.glDisable(GL11.GL_DEPTH_TEST);
+	GL11.glDepthMask(false);
+	GlStateManager.func_179094_E(); // pushMatrix()
+
+	let positions = [
+		[0.5, 0.0, 0.5],
+		[0.5, 1.0, 0.5],
+		[-0.5, 0.0, -0.5],
+		[-0.5, 1.0, -0.5],
+		[0.5, 0.0, -0.5],
+		[0.5, 1.0, -0.5],
+		[-0.5, 0.0, 0.5],
+		[-0.5, 1.0, 0.5],
+		[0.5, 1.0, -0.5],
+		[0.5, 1.0, 0.5],
+		[-0.5, 1.0, 0.5],
+		[0.5, 1.0, 0.5],
+		[-0.5, 1.0, -0.5],
+		[0.5, 1.0, -0.5],
+		[-0.5, 1.0, -0.5],
+		[-0.5, 1.0, 0.5],
+		[0.5, 0.0, -0.5],
+		[0.5, 0.0, 0.5],
+		[-0.5, 0.0, 0.5],
+		[0.5, 0.0, 0.5],
+		[-0.5, 0.0, -0.5],
+		[0.5, 0.0, -0.5],
+		[-0.5, 0.0, -0.5],
+		[-0.5, 0.0, 0.5]
+	];
+
+	const colors = isRGB ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
+	let counter = 0;
+	Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
+	positions.forEach(pos => {
+		Tessellator.pos(
+			position[0] + 0.5 + pos[0] * width,
+			position[1] + expandY + pos[1] * height,
+			position[2] + 0.5 + pos[2] * width
+		).tex(0, 0);
+
+		counter++;
+		if (counter % 2 === 0) {
+			Tessellator.draw();
+			if (counter !== 24) {
+				Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
+			}
+		}
+	});
+
+	GlStateManager.func_179121_F(); // popMatrix()
+	GL11.glEnable(GL11.GL_TEXTURE_2D);
+	if (throughWall) GL11.glEnable(GL11.GL_DEPTH_TEST);
+	GL11.glDepthMask(true);
+	GL11.glDisable(GL11.GL_BLEND);
+}
+
+function drawNameThroughWalls(entity, scale) {
+	// TODO: Not through wall
+	Utils.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), Renderer.WHITE, false, scale, false, true);
 }
 
 function updateMessage() {
 	const NewVersion = `${Config.modulesFolder}/${ModuleName}/updates/${Version}`;
 	if (FileUtilities.exists(NewVersion)) return;
 	FileUtilities.newFile(NewVersion);
-	const MessageStr = new Message(
-		StartSeparator,
-		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed some bugs${Color.LINE_BREAK}${Color.LINE_BREAK}`,
-		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
-		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
-		EndSeparator
-	);
-	ChatLib.chat(MessageStr);
+	sendChangelog();
 }
 
 function checkForUpdates() {
@@ -480,14 +598,31 @@ function checkForUpdates() {
 		json: true
 	}).then(response => {
 		if (JSON.parse(JSON.stringify(response)).version !== Version) {
-			const Link = `https://github.com/Steinente/${ModuleName}/releases/latest`;
 			const MessageStr = new Message(
 				StartSeparator,
-				`${Color.RED}New version available! Download at:`,
-				new TextComponent(`${Color.BLUE}${Link}${Color.LINE_BREAK}`).setClick('open_url', `${Link}`),
+				`${Color.RED}New version available! Download at:${Color.LINE_BREAK}`,
+				ClickableLatest + Color.LINE_BREAK,
 				EndSeparator
 			);
 			ChatLib.chat(MessageStr);
 		}
 	});
+}
+
+function sendChangelog() {
+	const MessageStr = new Message(
+		StartSeparator,
+		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added 'All required dungeon mobs' setting (Default toggle: R)${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Fels${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Glyphs (that Enderman Slayer Beacons)${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added '/hb changelog' and '/hb download'${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed Livid solver${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed new Enderman Slayer and Mini-Boss${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed Enderman borders${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
+		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
+		EndSeparator
+	);
+	ChatLib.chat(MessageStr);
 }
