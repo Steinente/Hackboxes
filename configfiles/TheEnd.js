@@ -91,33 +91,33 @@ class TheEnd {
 
     @SwitchProperty({
         name: Setting.Enabled,
-        description: 'Slayer Mini-Boss',
+        description: 'Slayer III Mini-Boss',
         category: Setting.Slayer,
-        subcategory: Setting.Fanatic
+        subcategory: Setting.Devotee
     })
-    fanaticEnabled = true;
+    devoteeEnabled = true;
 
     @SwitchProperty({
         name: Setting.ThroughWall,
         category: Setting.Slayer,
-        subcategory: Setting.Fanatic
+        subcategory: Setting.Devotee
     })
-    fanaticThroughWallEnabled = true;
+    devoteeThroughWallEnabled = true;
 
     @ColorProperty({
         name: Setting.Color,
         category: Setting.Slayer,
-        subcategory: Setting.Fanatic,
+        subcategory: Setting.Devotee,
         allowAlpha: false
     })
-    fanaticColor = new Color(1, 0, 1);
+    devoteeColor = new Color(1, 0, 1);
 
     @SwitchProperty({
         name: Setting.RGB,
         category: Setting.Slayer,
-        subcategory: Setting.Fanatic
+        subcategory: Setting.Devotee
     })
-    fanaticRGBEnabled = false;
+    devoteeRGBEnabled = false;
 
     // --------------------------------------
 
@@ -125,31 +125,63 @@ class TheEnd {
         name: Setting.Enabled,
         description: 'Slayer Boss',
         category: Setting.Slayer,
-        subcategory: Setting.Slayer
+        subcategory: Setting.Seraph
     })
-    slayerEnabled = true;
+    seraphEnabled = true;
 
     @SwitchProperty({
         name: Setting.ThroughWall,
         category: Setting.Slayer,
-        subcategory: Setting.Slayer
+        subcategory: Setting.Seraph
     })
-    slayerThroughWallEnabled = true;
+    seraphThroughWallEnabled = true;
 
     @ColorProperty({
         name: Setting.Color,
         category: Setting.Slayer,
-        subcategory: Setting.Slayer,
+        subcategory: Setting.Seraph,
         allowAlpha: false
     })
-    slayerColor = new Color(1, 0, 0);
+    seraphColor = new Color(1, 0, 0);
 
     @SwitchProperty({
         name: Setting.RGB,
         category: Setting.Slayer,
-        subcategory: Setting.Slayer
+        subcategory: Setting.Seraph
     })
-    slayerRGBEnabled = false;
+    seraphRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
+        description: 'Beacon thrown by the slayer',
+        category: Setting.Slayer,
+        subcategory: Setting.Glyph
+    })
+    glyphEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Slayer,
+        subcategory: Setting.Glyph
+    })
+    glyphThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Slayer,
+        subcategory: Setting.Glyph,
+        allowAlpha: false
+    })
+    glyphColor = new Color(0, 0, 1);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Slayer,
+        subcategory: Setting.Glyph
+    })
+    glyphRGBEnabled = false;
 
     // --------------------------------------
 
