@@ -23,7 +23,6 @@ import Dungeon from './configfiles/Dungeon';
 
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
-const MCWorld = Java.type('net.minecraft.world.World');
 
 const ModuleName = 'Hackboxes';
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
