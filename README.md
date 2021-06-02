@@ -26,6 +26,7 @@ The purpose of these modules is to frame significant mobs on Hypixel Skyblock wi
 8. Open you Minecraft folder. By default `C:\Users\{user}\AppData\Roaming\.minecraft` or type `%appdata%` into you file explorer and navigate to `.minecraft`.
 9. If not exists: Create the folders `config/ChatTriggers/modules`.
 10. Navigate to `config/ChatTriggers/modules` and paste the content from the clipboard with `CTRL + V`.
+ - Should look like this: `config/ChatTriggers/modules/Hackboxes/[content like index.js]`
 11. Restart Minecraft or run the command `/ct reload`.
 12. Done.
 
