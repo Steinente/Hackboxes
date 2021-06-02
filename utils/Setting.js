@@ -23,6 +23,7 @@ const Setting = {
     FarmingIslands: 'The Farming Islands',
     Dungeon: 'Dungeon',
     Misc: 'Misc',
+    Special: 'Special',
     Slayer: 'Slayer',
     Mythological: 'Mythological Ritual',
     Event: 'Event',
@@ -55,7 +56,9 @@ const Setting = {
     Arachne: 'Arachne',
     Eye: 'Summoning Eye',
     Zealot: 'Special Zealot',
-    Fanatic: 'Voidling Fanatic',
+    Seraph: 'Voidgloom Seraph',
+    Glyph: 'Glyph',
+    Devotee: 'Voidling Devotee',
     Dragon: 'Ender Dragon',
     Crystal: 'Ender Crystal',
     PowderGhast: 'Powder Ghast',
@@ -63,8 +66,10 @@ const Setting = {
     Arrow: 'Arrow',
     Ghost: 'Ghost',
     Trevor: 'Trevor Animal',
-    Bat: 'Bat',
     Bonzo: 'Bonzo',
-    Livid: 'Livid'
+    Livid: 'Livid',
+    Bat: 'Bat',
+    Fels: 'Fels',
+    RequiredMobs: 'Required Mobs'
 }
 export { Setting as default };
