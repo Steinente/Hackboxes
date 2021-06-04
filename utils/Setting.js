@@ -29,6 +29,8 @@ const Setting = {
     Event: 'Event',
     Boss: 'Boss',
     Enabled: 'Enabled',
+    Horizontal: 'Horizontal range',
+    Vertical: 'Vertical range',
     ThroughWall: 'Through Wall',
     Color: 'Color',
     RGB: 'RGB',

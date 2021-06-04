@@ -1,4 +1,4 @@
-import { @Vigilant, @SwitchProperty, @ColorProperty, @ButtonProperty } from 'Vigilance';
+import { @Vigilant, @SwitchProperty, @ColorProperty, @ButtonProperty, @SliderProperty } from 'Vigilance';
 import Setting from '../utils/Setting';
 const Color = Java.type('java.awt.Color');
 
@@ -22,6 +22,24 @@ class TheFarmingIslands {
         subcategory: Setting.FarmingIslands
     })
     enabled = true;
+
+    @SliderProperty({
+        name: Setting.Horizontal,
+        min: 10,
+        max: 60,
+        category: Setting.FarmingIslands,
+        subcategory: Setting.FarmingIslands
+    })
+    horizontal = 60;
+
+    @SliderProperty({
+        name: Setting.Vertical,
+        min: 1,
+        max: 200,
+        category: Setting.FarmingIslands,
+        subcategory: Setting.FarmingIslands
+    })
+    vertical = 200;
 
     // --------------------------------------
 

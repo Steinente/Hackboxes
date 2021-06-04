@@ -1,4 +1,4 @@
-import { @Vigilant, @SwitchProperty, @ColorProperty, @ButtonProperty } from 'Vigilance';
+import { @Vigilant, @SwitchProperty, @ColorProperty, @ButtonProperty, @SliderProperty } from 'Vigilance';
 import Setting from '../utils/Setting';
 import SBSymbol from '../../SkyblockUtilities/enums/SBSymbol';
 const Color = Java.type('java.awt.Color');
@@ -23,6 +23,24 @@ class Dungeon {
         subcategory: Setting.Dungeon
     })
     enabled = true;
+
+    @SliderProperty({
+        name: Setting.Horizontal,
+        min: 10,
+        max: 60,
+        category: Setting.Dungeon,
+        subcategory: Setting.Dungeon
+    })
+    horizontal = 60;
+
+    @SliderProperty({
+        name: Setting.Vertical,
+        min: 1,
+        max: 200,
+        category: Setting.Dungeon,
+        subcategory: Setting.Dungeon
+    })
+    vertical = 200;
 
     // --------------------------------------
 
