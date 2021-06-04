@@ -23,6 +23,7 @@ import Dungeon from './configfiles/Dungeon';
 
 const GL11 = Java.type('org.lwjgl.opengl.GL11');
 const GlStateManager = Java.type('net.minecraft.client.renderer.GlStateManager');
+const AxisAlignedBB = Java.type('net.minecraft.util.AxisAlignedBB');
 
 const ModuleName = 'Hackboxes';
 const Version = JSON.parse(FileLib.read(`${Config.modulesFolder}/${ModuleName}/metadata.json`)).version;
@@ -30,10 +31,13 @@ const Latest = `https://github.com/Steinente/${ModuleName}/releases/latest`;
 const ClickableLatest = new TextComponent(`${Color.BLUE}${Latest}`).setClick('open_url', `${Latest}`);
 const ToggleModuleKeybind = new KeyBind('Toggle module', 35, ModuleName);
 const ToggleRequiredMobsKeybind = new KeyBind('Toggle required dungeon mobs', 19, ModuleName);
+const UsedAreas = [Area.HUB, Area.THE_PARK, Area.SPIDERS_DEN, Area.THE_END, Area.DWARVEN_MINES, Area.THE_FARMING_ISLANDS, Area.DUNGEON];
 const StartSeparator = `${Color.YELLOW}-------------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}--------------${Color.LINE_BREAK}`;
 const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
 const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'Elusive'];
+const GlyphPlacePitch = 0.4920634925365448;
+const GlyphRemovePitch = 0.4920634925365448;
 
 let rgb = [1, 0, 0];
 let boxes = [];
@@ -52,13 +56,9 @@ register('command', ...args => command(args)).setName('hackboxes');
 
 register('step', () => {
 	if (!General.enabled) return;
-	AreaVisibility[Area.HUB] = Hub.enabled;
-	AreaVisibility[Area.THE_PARK] = ThePark.enabled;
-	AreaVisibility[Area.SPIDERS_DEN] = SpidersDen.enabled;
-	AreaVisibility[Area.THE_END] = TheEnd.enabled;
-	AreaVisibility[Area.DWARVEN_MINES] = DwarvenMines.enabled;
-	AreaVisibility[Area.THE_FARMING_ISLANDS] = TheFarmingIslands.enabled;
-	AreaVisibility[Area.DUNGEON] = Dungeon.enabled;
+	UsedAreas.forEach(area => {
+		AreaVisibility[area] = this[getValidArea(area)].enabled;
+	});
 }).setFps(1);
 
 register('renderWorld', ticks => {
@@ -82,9 +82,10 @@ register('tick', () => {
 	let allEntities = [];
 	rgbChange();
 	if (Everywhere.enabled) {
-		allEntities = World.getAllEntities();
-		allEntities.forEach(entity => {
-			let mcEntity = entity.entity;
+		// TODO: MCEntity.ENTITY after SkyblockUtilities update
+		allEntities = World.getWorld().func_72872_a(Java.type('net.minecraft.entity.Entity').class, getScanArea('Everywhere')); // getEntitiesWithinAABB()
+		allEntities.forEach(mcEntity => {
+			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
 			if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 				if (Everywhere.giftEnabled && entityName.includes('CLICK TO OPEN')) {
@@ -97,12 +98,13 @@ register('tick', () => {
 		});
 	}
 	if (AreaVisibility[SkyblockUtilities.getArea()]) {
-		if (allEntities.length === 0) allEntities = World.getAllEntities();
-		allEntities.forEach(entity => {
-			let mcEntity = entity.entity;
+		const area = getValidArea(SkyblockUtilities.getArea());
+		if (allEntities.length === 0) allEntities = World.getWorld().func_72872_a(MCEntity.ENTITY.class, getScanArea(area)); // getEntitiesWithinAABB()
+		allEntities.forEach(mcEntity => {
+			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
 			// Builds and invokes function
-			this['render' + SkyblockUtilities.getArea().replace(/[\\' ]/g, '')](entity, mcEntity, entityName);
+			this['render' + area](entity, mcEntity, entityName);
 		});
 	}
 	boxes = boxesnew;
@@ -113,17 +115,34 @@ register('tick', () => {
 	lividList = [];
 });
 
-register('soundPlay', (position, name) => {
-	if (AreaVisibility[Area.THE_END] && !TheEnd.glyphEnabled) return;
-	const block = [[position.getX(), position.getY(), position.getZ()], TheEnd.glyphColor, TheEnd.glyphRGBEnabled, 5, 1, 3, 0, TheEnd.glyphThroughWallEnabled];
-	if (name.includes('game.neutral.hurt')) {
-		blocks.push(block);
-		setTimeout(() => removeBlock(position), 10000);
+register('soundPlay', (pos, name, vol, pitch, cat, event) => {
+	if (SkyblockUtilities.getArea() !== Area.THE_END && AreaVisibility[Area.THE_END] && !TheEnd.glyphEnabled) return;
+	const mcPitch = event.sound.func_147655_f(); // getPitch()
+	if (name.includes('game.neutral.hurt') && mcPitch === GlyphPlacePitch) {
+		blocks.push([[pos.getX(), pos.getY(), pos.getZ()], TheEnd.glyphColor, TheEnd.glyphRGBEnabled, 5, 1, 3, 0, TheEnd.glyphThroughWallEnabled]);
+		setTimeout(() => removeBlock(pos), 10000);
 	}
-	if (name.includes('random.break')) {
-		removeBlock(position);
+	if (name.includes('random.break') && mcPitch === GlyphRemovePitch) {
+		removeBlock(pos);
 	}
 });
+
+function getValidArea(area) {
+	return area.replace(/[\\' ]/g, '');
+}
+
+function getScanArea(area) {
+	const horizontal = this[area].horizontal;
+	const vertical = this[area].vertical;
+	return new AxisAlignedBB(
+		Player.getX() + horizontal,
+		Player.getY() + vertical >= 255 ? 255 : Player.getY() + vertical,
+		Player.getZ() + horizontal,
+		Player.getX() - horizontal,
+		Player.getY() - vertical <= 0 ? 0 : Player.getY() - vertical,
+		Player.getZ() - horizontal
+	);
+}
 
 function removeBlock(position) {
 	const blocksnew = blocks.filter(e => e[0][0] !== position.getX() && e[0][1] !== position.getY() && e[0][2] !== position.getZ());
@@ -612,13 +631,8 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added 'All required dungeon mobs' setting (Default toggle: R)${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Fels${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Glyphs (that Enderman Slayer Beacons)${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added '/hb changelog' and '/hb download'${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed Livid solver${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed new Enderman Slayer and Mini-Boss${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed Enderman borders${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added possibility to change render distance to increase performance${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed Glyphs borders shown sometimes at random positions${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
