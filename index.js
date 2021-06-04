@@ -77,13 +77,14 @@ register('worldUnload', () => {
 });
 
 register('tick', () => {
+	const EntityEntity = Java.type('net.minecraft.entity.Entity');
 	checkKeybinds();
 	if (!General.enabled) return;
 	let allEntities = [];
 	rgbChange();
 	if (Everywhere.enabled) {
 		// TODO: MCEntity.ENTITY after SkyblockUtilities update
-		allEntities = World.getWorld().func_72872_a(Java.type('net.minecraft.entity.Entity').class, getScanArea('Everywhere')); // getEntitiesWithinAABB()
+		allEntities = World.getWorld().func_72872_a(EntityEntity.class, getScanArea('Everywhere')); // getEntitiesWithinAABB()
 		allEntities.forEach(mcEntity => {
 			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
@@ -99,7 +100,7 @@ register('tick', () => {
 	}
 	if (AreaVisibility[SkyblockUtilities.getArea()]) {
 		const area = getValidArea(SkyblockUtilities.getArea());
-		if (allEntities.length === 0) allEntities = World.getWorld().func_72872_a(MCEntity.ENTITY.class, getScanArea(area)); // getEntitiesWithinAABB()
+		if (allEntities.length === 0) allEntities = World.getWorld().func_72872_a(EntityEntity.class, getScanArea(area)); // getEntitiesWithinAABB()
 		allEntities.forEach(mcEntity => {
 			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
