@@ -619,7 +619,7 @@ function checkForUpdates() {
 			const MessageStr = new Message(
 				StartSeparator,
 				`${Color.RED}New version available! Download at:${Color.LINE_BREAK}`,
-				ClickableLatest + Color.LINE_BREAK,
+				ClickableLatest, Color.LINE_BREAK,
 				EndSeparator
 			);
 			ChatLib.chat(MessageStr);
