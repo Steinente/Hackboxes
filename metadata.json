@@ -2,7 +2,7 @@
   "name": "Hackboxes",
   "creator": "Steinente / EnteStein",
   "description": "Creates borders around significant entities. Settings: &6/hb",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "entry": "index.js",
   "requires": ["Vigilance", "SkyblockUtilities", "FileUtilities", "requestV2", "PersistentKeyBinds"]
 }
