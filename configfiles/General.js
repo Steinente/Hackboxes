@@ -72,6 +72,16 @@ class General {
     }
 
     @ButtonProperty({
+        name: Setting.DeepCaverns,
+        placeholder: Setting.Open,
+        category: Setting.Areas,
+        subcategory: Setting.Areas
+    })
+    openDeepCaverns() {
+        ChatLib.command('hb caverns', true);
+    }
+
+    @ButtonProperty({
         name: Setting.DwarvenMines,
         placeholder: Setting.Open,
         category: Setting.Areas,
