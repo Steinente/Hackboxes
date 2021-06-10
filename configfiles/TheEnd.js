@@ -205,6 +205,38 @@ class TheEnd {
 
     @SwitchProperty({
         name: Setting.Enabled,
+        description: 'Look at it or you will die',
+        category: Setting.Slayer,
+        subcategory: Setting.Weird
+    })
+    weirdEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Slayer,
+        subcategory: Setting.Weird
+    })
+    weirdThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Slayer,
+        subcategory: Setting.Weird,
+        allowAlpha: false
+    })
+    weirdColor = new Color(1, 1, 1);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Slayer,
+        subcategory: Setting.Weird
+    })
+    weirdRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
         description: 'Summoned Boss',
         category: Setting.Dragon,
         subcategory: Setting.Dragon
