@@ -17,6 +17,7 @@ import Hub from './configfiles/Hub';
 import ThePark from './configfiles/ThePark';
 import SpidersDen from './configfiles/SpidersDen';
 import TheEnd from './configfiles/TheEnd';
+import DeepCaverns from './configfiles/DeepCaverns';
 import DwarvenMines from './configfiles/DwarvenMines';
 import TheFarmingIslands from './configfiles/TheFarmingIslands';
 import Dungeon from './configfiles/Dungeon';
@@ -31,10 +32,11 @@ const Latest = `https://github.com/Steinente/${ModuleName}/releases/latest`;
 const ClickableLatest = new TextComponent(`${Color.BLUE}${Latest}`).setClick('open_url', `${Latest}`);
 const ToggleModuleKeybind = new KeyBind('Toggle module', 35, ModuleName);
 const ToggleRequiredMobsKeybind = new KeyBind('Toggle required dungeon mobs', 19, ModuleName);
-const UsedAreas = [Area.HUB, Area.THE_PARK, Area.SPIDERS_DEN, Area.THE_END, Area.DWARVEN_MINES, Area.THE_FARMING_ISLANDS, Area.DUNGEON];
+const UsedAreas = [Area.HUB, Area.THE_PARK, Area.SPIDERS_DEN, Area.THE_END, Area.DEEP_CAVERNS, Area.DWARVEN_MINES, Area.THE_FARMING_ISLANDS, Area.DUNGEON];
 const StartSeparator = `${Color.YELLOW}-------------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}--------------${Color.LINE_BREAK}`;
 const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
+const WeirdHeadTexture = 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWIwNzU5NGUyZGYyNzM5MjFhNzdjMTAxZDBiZmRmYTExMTVhYmVkNWI5YjIwMjllYjQ5NmNlYmE5YmRiYjRiMyJ9fX0=';
 const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'Elusive'];
 const GlyphPlacePitch = 0.4920634925365448;
 const GlyphRemovePitch = 0.4920634925365448;
@@ -77,14 +79,12 @@ register('worldUnload', () => {
 });
 
 register('tick', () => {
-	const EntityEntity = Java.type('net.minecraft.entity.Entity');
 	checkKeybinds();
 	if (!General.enabled) return;
 	let allEntities = [];
 	rgbChange();
 	if (Everywhere.enabled) {
-		// TODO: MCEntity.ENTITY after SkyblockUtilities update
-		allEntities = World.getWorld().func_72872_a(EntityEntity.class, getScanArea('Everywhere')); // getEntitiesWithinAABB()
+		allEntities = World.getWorld().func_72872_a(MCEntity.ENTITY.class, getScanArea('Everywhere')); // getEntitiesWithinAABB()
 		allEntities.forEach(mcEntity => {
 			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
@@ -100,7 +100,7 @@ register('tick', () => {
 	}
 	if (AreaVisibility[SkyblockUtilities.getArea()]) {
 		const area = getValidArea(SkyblockUtilities.getArea());
-		if (allEntities.length === 0) allEntities = World.getWorld().func_72872_a(EntityEntity.class, getScanArea(area)); // getEntitiesWithinAABB()
+		if (allEntities.length === 0) allEntities = World.getWorld().func_72872_a(MCEntity.ENTITY.class, getScanArea(area)); // getEntitiesWithinAABB()
 		allEntities.forEach(mcEntity => {
 			let entity = new Entity(mcEntity);
 			let entityName = ChatLib.removeFormatting(entity.getName());
@@ -171,6 +171,9 @@ function command(args) {
 			case 'end':
 				TheEnd.openGUI();
 				break;
+			case 'caverns':
+				DeepCaverns.openGUI();
+				break;
 			case 'mines':
 				DwarvenMines.openGUI();
 				break;
@@ -194,6 +197,7 @@ function command(args) {
 					`${Color.GRAY}● ${Color.GOLD}Park${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Den${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}End${Color.LINE_BREAK}` +
+					`${Color.GRAY}● ${Color.GOLD}Caverns${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Mines${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Farming${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Dungeon`;
@@ -216,48 +220,47 @@ function command(args) {
 function renderHub(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Hub.revenantEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Horror')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.revenantThroughWallEnabled]);
 			boxesnew.push([entity, Hub.revenantColor, Hub.revenantRGBEnabled, 5, 1, -2, 0, Hub.revenantThroughWallEnabled]);
 		} else if (Hub.atonedRevEnabled && entityName.includes('Atoned Revenant')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.atonedRevThroughWallEnabled]);
 			boxesnew.push([entity, Hub.atonedRevColor, Hub.atonedRevRGBEnabled, 5, 1, -2, 0, Hub.atonedRevThroughWallEnabled]);
 		} else if (Hub.atonedChampEnabled && entityName.includes('Atoned Champion')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.atonedChampThroughWallEnabled]);
 			boxesnew.push([entity, Hub.atonedChampColor, Hub.atonedChampRGBEnabled, 5, 1, -2, 0, Hub.atonedChampThroughWallEnabled]);
 		} else if (Hub.deformedEnabled && entityName.includes('Deformed')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.deformedThroughWallEnabled]);
 			boxesnew.push([entity, Hub.deformedColor, Hub.deformedRGBEnabled, 5, 1, -2, 0, Hub.deformedThroughWallEnabled]);
 		} else if (Hub.champEnabled && entityName.includes('Revenant Champion')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.champThroughWallEnabled]);
 			boxesnew.push([entity, Hub.champColor, Hub.champRGBEnabled, 5, 1, -2, 0, Hub.champThroughWallEnabled]);
 		} else if (Hub.sycophantEnabled && entityName.includes('Sycophant')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.sycophantThroughWallEnabled]);
 			boxesnew.push([entity, Hub.sycophantColor, Hub.sycophantRGBEnabled, 5, 1, -2, 0, Hub.sycophantThroughWallEnabled]);
 		} else if (Hub.ratEnabled && Utils.containsAll(entityName, 'Rat', '❤')) {
 			boxesnew.push([entity, Hub.ratColor, Hub.ratRGBEnabled, 1, 1, -1, 0, Hub.ratThroughWallEnabled]);
 		} else if (Hub.inquisitorEnabled && entityName.includes('Inquisitor')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, Hub.inquisitorThroughWallEnabled]);
 			boxesnew.push([entity, Hub.inquisitorColor, Hub.inquisitorRGBEnabled, 5, 1, -2, 0, Hub.inquisitorThroughWallEnabled]);
 		}
 	}
-	if (Hub.parkEnabled) {
-		renderThePark(entity, mcEntity, entityName);
-	}
+	if (!Hub.parkEnabled) return;
+	renderThePark(entity, mcEntity, entityName);
 }
 
 function renderThePark(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (ThePark.packmasterEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Sven') && !entityName.includes('Pup')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, ThePark.packmasterThroughWallEnabled]);
 			boxesnew.push([entity, ThePark.packmasterColor, ThePark.packmasterRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.packmasterThroughWallEnabled]);
 		} else if (ThePark.alphaEnabled && entityName.includes('Alpha') && !entityName.includes('Soul')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, ThePark.alphaThroughWallEnabled]);
 			boxesnew.push([entity, ThePark.alphaColor, ThePark.alphaRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.alphaThroughWallEnabled]);
 		} else if (ThePark.followerEnabled && entityName.includes('Follower')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, ThePark.followerThroughWallEnabled]);
 			boxesnew.push([entity, ThePark.followerColor, ThePark.followerRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.followerThroughWallEnabled]);
 		} else if (ThePark.enforcerEnabled && entityName.includes('Enforcer')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, ThePark.enforcerThroughWallEnabled]);
 			boxesnew.push([entity, ThePark.enforcerColor, ThePark.enforcerRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.enforcerThroughWallEnabled]);
 		}
 	}
@@ -266,27 +269,27 @@ function renderThePark(entity, mcEntity, entityName) {
 function renderSpidersDen(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (SpidersDen.fatherEnabled && entityName.includes(SBSymbol.SLAYER)) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.fatherThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.fatherColor, SpidersDen.fatherRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.fatherThroughWallEnabled]);
 		} else if (SpidersDen.mutantEnabled && entityName.includes('Mutant')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.mutantThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.mutantColor, SpidersDen.mutantRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.mutantThroughWallEnabled]);
 		} else if (SpidersDen.beastEnabled && entityName.includes('Beast') && !entityName.includes('Bramass')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.beastThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.beastColor, SpidersDen.beastRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.beastThroughWallEnabled]);
 		} else if (SpidersDen.verminEnabled && entityName.includes('Vermin')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.verminThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.verminColor, SpidersDen.verminRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.verminThroughWallEnabled]);
 		} else if (SpidersDen.keeperEnabled && entityName.includes('Keeper')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.keeperThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.keeperColor, SpidersDen.keeperRGBEnabled, 5, 0.75, -0.5, -0.3, SpidersDen.keeperThroughWallEnabled]);
 		} else if (SpidersDen.motherEnabled && entityName.includes('Mother')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.motherThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.motherColor, SpidersDen.motherRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.motherThroughWallEnabled]);
 		} else if (SpidersDen.broodEnabled && entityName.includes('Brood')) {
 			boxesnew.push([entity, SpidersDen.broodColor, SpidersDen.broodRGBEnabled, 5, 0.75, -0.5, -0.3, SpidersDen.broodThroughWallEnabled]);
 		} else if (SpidersDen.arachneEnabled && entityName.includes('Arachne') && Utils.containsNone(entityName, 'Brood', 'Fragment', 'Keeper')) {
-			stringnew.push([entity, 0.05]);
+			stringnew.push([entity, 0.05, SpidersDen.arachneThroughWallEnabled]);
 			boxesnew.push([entity, SpidersDen.arachneColor, SpidersDen.arachneRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.arachneThroughWallEnabled]);
 		}
 	}
@@ -295,12 +298,12 @@ function renderSpidersDen(entity, mcEntity, entityName) {
 function renderTheEnd(entity, mcEntity, entityName) {
 	if (SkyblockUtilities.getLocation() === Location.DRAGONS_NEST) {
 		if (mcEntity instanceof MCEntity.ITEM) {
-			if (TheEnd.eyeEnabled && getSkullOwner(mcEntity) === SummoningEyeSkullOwner) {
+			if (TheEnd.eyeEnabled && getSkullOwner(mcEntity.func_92059_d()) === SummoningEyeSkullOwner) { // getEntityItem()
 				boxesnew.push([entity, TheEnd.eyeColor, TheEnd.eyeRGBEnabled, 5, 0.5, 4, 0, TheEnd.eyeThroughWallEnabled]);
 			}
 		} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 			if (TheEnd.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
-				stringnew.push([entity, 0.1]);
+				stringnew.push([entity, 0.05, TheEnd.zealotThroughWallEnabled]);
 				boxesnew.push([entity, TheEnd.zealotColor, TheEnd.zealotRGBEnabled, 5, 1, -3, 0, TheEnd.zealotThroughWallEnabled]);
 			}
 		} else if (mcEntity instanceof MCEntity.DRAGON) {
@@ -315,11 +318,23 @@ function renderTheEnd(entity, mcEntity, entityName) {
 	}
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (TheEnd.seraphEnabled && entityName.includes(SBSymbol.SLAYER)) {
-			stringnew.push([entity, 0.1]);
+			stringnew.push([entity, 0.05, TheEnd.seraphThroughWallEnabled]);
 			boxesnew.push([entity, TheEnd.seraphColor, TheEnd.seraphRGBEnabled, 5, 1, -3, 0, TheEnd.seraphThroughWallEnabled]);
 		} else if (TheEnd.devoteeEnabled && entityName.includes('Devotee')) {
-			stringnew.push([entity, 0.1]);
+			stringnew.push([entity, 0.05, TheEnd.devoteeThroughWallEnabled]);
 			boxesnew.push([entity, TheEnd.devoteeColor, TheEnd.devoteeRGBEnabled, 5, 1, -3, 0, TheEnd.devoteeThroughWallEnabled]);
+		} else if (TheEnd.weirdEnabled && getSkullTexture(mcEntity.func_71124_b(4)) === WeirdHeadTexture) { // getEquipmentInSlot()
+			boxesnew.push([entity, TheEnd.weirdColor, TheEnd.weirdRGBEnabled, 5, 1, 1, 0.5, TheEnd.weirdThroughWallEnabled]);
+		}
+	}
+}
+
+function renderDeepCaverns(entity, mcEntity, entityName) {
+	if (SkyblockUtilities.getLocation() === Location.GUNPOWDER_MINES) {
+		if (mcEntity instanceof MCEntity.CREEPER) {
+			if (DeepCaverns.creeperEnabled) {
+				boxesnew.push([entity, DeepCaverns.creeperColor, DeepCaverns.creeperRGBEnabled, 1, 1, 2, 0, DeepCaverns.creeperThroughWallEnabled]);
+			}
 		}
 	}
 }
@@ -328,7 +343,7 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (DwarvenMines.powderGhastEnabled && entityName.includes('Powder Ghast')) {
 			isPowderGhast = true;
-			stringnew.push([entity, 0.1]);
+			stringnew.push([entity, 0.1, DwarvenMines.powderGhastThroughWallEnabled]);
 			boxesnew.push([entity, DwarvenMines.powderGhastColor, DwarvenMines.powderGhastRGBEnabled, 2, 4, -4, 0, DwarvenMines.powderGhastThroughWallEnabled]);
 		}
 	} else if (mcEntity instanceof MCEntity.IRON_GOLEM) {
@@ -367,7 +382,7 @@ function renderDungeon(entity, mcEntity, entityName) {
 	} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Dungeon.felsEnabled && Utils.containsAll(entityName, 'Fels', SBSymbol.REQUIRE_STAR)) {
 			boxesnew.push([entity, Dungeon.felsColor, Dungeon.felsRGBEnabled, 3, 1, -3, 0, Dungeon.felsThroughWallEnabled]);
-		} else if (Dungeon.requiredEnabled && Utils.containsOne(entityName, SBSymbol.REQUIRE_STAR, 'Shadow Assassin', 'Lost Adventurer', 'Angry Archaeologist')) {
+		} else if (Dungeon.requiredEnabled && Utils.containsOne(entityName, SBSymbol.REQUIRE_STAR, 'Shadow Assassin', 'Lost Adventurer', 'Angry Archeologist')) {
 			boxesnew.push([entity, Dungeon.requiredColor, Dungeon.requiredRGBEnabled, 2, 1, -2, 0, Dungeon.requiredThroughWallEnabled]);
 		}
 		switch(SkyblockUtilities.getFloor()) {
@@ -466,12 +481,19 @@ function transformColor(color) {
 	return (1 / 255 * color).toFixed(2);
 }
 
-function getSkullOwner(mcEntity) {
-	const ItemStr = new Item(mcEntity.func_92059_d()); // getEntityItem()
-	const NbtData = ItemStr.getNBT();
-	const NBTBase = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id');
-	const SkullOwner = NBTBase !== null ? NBTBase.toString() : '';
-	return SkullOwner.replace(/"/g, '');
+function getSkullOwner(itemstack) {
+	if (itemstack === null) return '';
+	const NBTBase = new Item(itemstack).getNBT().getCompoundTag('tag').getCompoundTag('SkullOwner').get('Id');
+	if (NBTBase === null) return '';
+	return NBTBase.toString().replace(/"/g, '');
+}
+
+function getSkullTexture(itemstack) {
+	if (itemstack === null) return '';
+	const NbtData = new Item(itemstack).getNBT();
+	const NBTBase = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').getCompoundTag('Properties').getTag('textures');
+	if (NBTBase === null) return '';
+	return NBTBase.toString().match(/Value:".*"/)[0].replace(/Value:"/, '').replace('"', '');
 }
 
 function drawBoxAroundEntity(entity, color, isRGB, lineWidth, width, height, expandY, throughWall, partialTicks) {
@@ -598,9 +620,9 @@ function drawBoxAroundBlock(position, color, isRGB, lineWidth, width, height, ex
 	GL11.glDisable(GL11.GL_BLEND);
 }
 
-function drawNameThroughWalls(entity, scale) {
-	// TODO: Not through wall
-	Utils.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), Renderer.WHITE, false, scale, false, true);
+function drawNameThroughWalls(entity, scale, throughWall) {
+	Utils.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), Renderer.WHITE, false, scale, false, throughWall);
+	entity.entity.func_174805_g(false); // setAlwaysRenderNameTag()
 }
 
 function updateMessage() {
@@ -632,8 +654,10 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added possibility to change render distance to increase performance${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed Glyphs borders shown sometimes at random positions${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Weird Head (that EnderSlayer heads)${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Sneaky Creeper${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}now the nametag is no longer shown through the wall if the box is not shown through the wall either${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}removed original nametags if custom nametag is rendered${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
