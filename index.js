@@ -41,6 +41,7 @@ const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'El
 const GlyphPlacePitch = 0.4920634925365448;
 const GlyphRemovePitch = 0.4920634925365448;
 
+let firstTimeSB = false;
 let rgb = [1, 0, 0];
 let boxes = [];
 let strings = [];
@@ -49,9 +50,6 @@ let boxesnew = [];
 let stringnew = [];
 let isPowderGhast = false;
 let AreaVisibility = {};
-
-updateMessage();
-checkForUpdates();
 
 register('command', ...args => command(args)).setName('hb');
 register('command', ...args => command(args)).setName('hackboxes');
@@ -62,6 +60,14 @@ register('step', () => {
 		AreaVisibility[area] = this[getValidArea(area)].enabled;
 	});
 }).setFps(1);
+
+register('step', () => {
+	if (SkyblockUtilities.isSkyblock() && !firstTimeSB) {
+		firstTimeSB = true;
+		updateMessage();
+		checkForUpdates();
+	}
+}).setDelay(3);
 
 register('renderWorld', ticks => {
 	if (!General.enabled) return;
@@ -323,6 +329,12 @@ function renderTheEnd(entity, mcEntity, entityName) {
 		} else if (TheEnd.devoteeEnabled && entityName.includes('Devotee')) {
 			stringnew.push([entity, 0.05, TheEnd.devoteeThroughWallEnabled]);
 			boxesnew.push([entity, TheEnd.devoteeColor, TheEnd.devoteeRGBEnabled, 5, 1, -3, 0, TheEnd.devoteeThroughWallEnabled]);
+		} else if (TheEnd.radicalEnabled && entityName.includes('Radical')) {
+			stringnew.push([entity, 0.05, TheEnd.radicalThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd.radicalColor, TheEnd.radicalRGBEnabled, 5, 1, -3, 0, TheEnd.radicalThroughWallEnabled]);
+		} else if (TheEnd.maniacEnabled && entityName.includes('Maniac')) {
+			stringnew.push([entity, 0.05, TheEnd.maniacThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd.maniacEnabled, TheEnd.maniacRGBEnabled, 5, 1, -3, 0, TheEnd.maniacThroughWallEnabled]);
 		} else if (TheEnd.weirdEnabled && getSkullTexture(mcEntity.func_71124_b(4)) === WeirdHeadTexture) { // getEquipmentInSlot()
 			boxesnew.push([entity, TheEnd.weirdColor, TheEnd.weirdRGBEnabled, 5, 1, 1, 0.5, TheEnd.weirdThroughWallEnabled]);
 		}
@@ -654,10 +666,9 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Weird Head (that EnderSlayer heads)${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Sneaky Creeper${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}now the nametag is no longer shown through the wall if the box is not shown through the wall either${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}removed original nametags if custom nametag is rendered${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Voidling Radical${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Voidcrazed Maniac${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed update message and changelog not shown${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
