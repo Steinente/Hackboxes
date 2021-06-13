@@ -63,6 +63,8 @@ const Setting = {
     Glyph: 'Glyph',
     Weird: 'Weird Head',
     Devotee: 'Voidling Devotee',
+    Radical: 'Voidling Radical',
+    Maniac: 'Voidcrazed Maniac',
     Dragon: 'Ender Dragon',
     Crystal: 'Ender Crystal',
     Creeper: 'Sneaky Creeper',
