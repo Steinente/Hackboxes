@@ -109,7 +109,7 @@ class TheEnd {
 
     @SwitchProperty({
         name: Setting.Enabled,
-        description: 'Slayer III Mini-Boss',
+        description: 'Tier III Slayer Mini-Boss',
         category: Setting.Slayer,
         subcategory: Setting.Devotee
     })
@@ -128,7 +128,7 @@ class TheEnd {
         subcategory: Setting.Devotee,
         allowAlpha: false
     })
-    devoteeColor = new Color(1, 0, 1);
+    devoteeColor = new Color(0, 1, 1);
 
     @SwitchProperty({
         name: Setting.RGB,
@@ -136,6 +136,70 @@ class TheEnd {
         subcategory: Setting.Devotee
     })
     devoteeRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
+        description: 'Weak Tier IV Slayer Mini-Boss',
+        category: Setting.Slayer,
+        subcategory: Setting.Radical
+    })
+    radicalEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Slayer,
+        subcategory: Setting.Radical
+    })
+    radicalThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Slayer,
+        subcategory: Setting.Radical,
+        allowAlpha: false
+    })
+    radicalColor = new Color(0, 0, 1);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Slayer,
+        subcategory: Setting.Radical
+    })
+    radicalRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
+        description: 'Strong Tier IV Slayer Mini-Boss',
+        category: Setting.Slayer,
+        subcategory: Setting.Maniac
+    })
+    maniacEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Slayer,
+        subcategory: Setting.Maniac
+    })
+    maniacThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Slayer,
+        subcategory: Setting.Maniac,
+        allowAlpha: false
+    })
+    maniacColor = new Color(1, 0, 1);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Slayer,
+        subcategory: Setting.Maniac
+    })
+    maniacRGBEnabled = false;
 
     // --------------------------------------
 
