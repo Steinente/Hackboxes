@@ -320,6 +320,10 @@ function renderTheEnd(entity, mcEntity, entityName) {
 			if (TheEnd.crystalEnabled) {
 				boxesnew.push([entity, TheEnd.crystalColor, TheEnd.crystalRGBEnabled, 5, 1, 2, 0, TheEnd.crystalThroughWallEnabled]);
 			}
+		} else if (mcEntity instanceof MCEntity.IRON_GOLEM) {
+			if (TheEnd.protectorEnabled) {
+				boxesnew.push([entity, TheEnd.protectorColor, TheEnd.protectorRGBEnabled, 4, 1.7, 2.7, 0, TheEnd.protectorThroughWallEnabled]);
+			}
 		}
 	}
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
@@ -334,7 +338,7 @@ function renderTheEnd(entity, mcEntity, entityName) {
 			boxesnew.push([entity, TheEnd.radicalColor, TheEnd.radicalRGBEnabled, 5, 1, -3, 0, TheEnd.radicalThroughWallEnabled]);
 		} else if (TheEnd.maniacEnabled && entityName.includes('Maniac')) {
 			stringnew.push([entity, 0.05, TheEnd.maniacThroughWallEnabled]);
-			boxesnew.push([entity, TheEnd.maniacEnabled, TheEnd.maniacRGBEnabled, 5, 1, -3, 0, TheEnd.maniacThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd.maniacColor, TheEnd.maniacRGBEnabled, 5, 1, -3, 0, TheEnd.maniacThroughWallEnabled]);
 		} else if (TheEnd.weirdEnabled && getSkullTexture(mcEntity.func_71124_b(4)) === WeirdHeadTexture) { // getEquipmentInSlot()
 			boxesnew.push([entity, TheEnd.weirdColor, TheEnd.weirdRGBEnabled, 5, 1, 1, 0.5, TheEnd.weirdThroughWallEnabled]);
 		}
@@ -666,9 +670,8 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Voidling Radical${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Voidcrazed Maniac${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed update message and changelog not shown${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Endstone Protector${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed an error${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
