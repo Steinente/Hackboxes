@@ -67,6 +67,7 @@ const Setting = {
     Maniac: 'Voidcrazed Maniac',
     Dragon: 'Ender Dragon',
     Crystal: 'Ender Crystal',
+    Protector: 'Endstone Protector',
     Creeper: 'Sneaky Creeper',
     PowderGhast: 'Powder Ghast',
     Superprotectron: 'Superprotectron',

@@ -361,12 +361,45 @@ class TheEnd {
     })
     crystalRGBEnabled = true;
 
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
+        description: 'Spawns every 5.000 Zealots',
+        category: Setting.Misc,
+        subcategory: Setting.Protector
+    })
+    protectorEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Misc,
+        subcategory: Setting.Protector
+    })
+    protectorThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Misc,
+        subcategory: Setting.Protector,
+        allowAlpha: false
+    })
+    protectorColor = new Color(0, 1, 0);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Misc,
+        subcategory: Setting.Protector
+    })
+    protectorRGBEnabled = false;
+
     constructor() {
         this.initialize(this);
         this.setCategoryDescription(Setting.End, Setting.CategoryDescription);
         this.setCategoryDescription(Setting.Slayer, Setting.CategoryDescription);
         this.setCategoryDescription(Setting.Dragon, Setting.CategoryDescription);
         this.setCategoryDescription(Setting.Zealot, Setting.CategoryDescription);
+        this.setCategoryDescription(Setting.Misc, Setting.CategoryDescription);
     }
 }
 export default new TheEnd;
