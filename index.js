@@ -84,7 +84,8 @@ register('worldUnload', () => {
 	lividList = [];
 });
 
-register('tick', () => {
+register('tick', ticks => {
+	if (ticks % 2) return;
 	checkKeybinds();
 	if (!General.enabled) return;
 	let allEntities = [];
@@ -96,10 +97,9 @@ register('tick', () => {
 			let entityName = ChatLib.removeFormatting(entity.getName());
 			if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 				if (Everywhere.giftEnabled && entityName.includes('CLICK TO OPEN')) {
-					boxesnew.push([entity, Everywhere.giftColor, Everywhere.giftRGBEnabled, 2, 1, 1, 1, Everywhere.giftThroughWallEnabled]);
-				}
-				if (Everywhere.jerryEnabled && Utils.containsAll(entityName, 'Jerry', 'Hit')) {
-					boxesnew.push([entity, Everywhere.jerryColor, Everywhere.jerryRGBEnabled, 2, 1, -2, 0, Everywhere.jerryThroughWallEnabled]);
+					boxesnew.push([entity, Everywhere, 'gift', 2, 1, 1, 1]);
+				} else if (Everywhere.jerryEnabled && Utils.containsAll(entityName, 'Jerry', 'Hit')) {
+					boxesnew.push([entity, Everywhere, 'jerry', 2, 1, -2, 0]);
 				}
 			}
 		});
@@ -227,27 +227,27 @@ function renderHub(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Hub.revenantEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Horror')) {
 			stringnew.push([entity, 0.05, Hub.revenantThroughWallEnabled]);
-			boxesnew.push([entity, Hub.revenantColor, Hub.revenantRGBEnabled, 5, 1, -2, 0, Hub.revenantThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'revenant', 5, 1, -2, 0]);
 		} else if (Hub.atonedRevEnabled && entityName.includes('Atoned Revenant')) {
 			stringnew.push([entity, 0.05, Hub.atonedRevThroughWallEnabled]);
-			boxesnew.push([entity, Hub.atonedRevColor, Hub.atonedRevRGBEnabled, 5, 1, -2, 0, Hub.atonedRevThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'atonedRev', 5, 1, -2, 0]);
 		} else if (Hub.atonedChampEnabled && entityName.includes('Atoned Champion')) {
 			stringnew.push([entity, 0.05, Hub.atonedChampThroughWallEnabled]);
-			boxesnew.push([entity, Hub.atonedChampColor, Hub.atonedChampRGBEnabled, 5, 1, -2, 0, Hub.atonedChampThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'atonedChamp', 5, 1, -2, 0]);
 		} else if (Hub.deformedEnabled && entityName.includes('Deformed')) {
 			stringnew.push([entity, 0.05, Hub.deformedThroughWallEnabled]);
-			boxesnew.push([entity, Hub.deformedColor, Hub.deformedRGBEnabled, 5, 1, -2, 0, Hub.deformedThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'deformed', 5, 1, -2, 0]);
 		} else if (Hub.champEnabled && entityName.includes('Revenant Champion')) {
 			stringnew.push([entity, 0.05, Hub.champThroughWallEnabled]);
-			boxesnew.push([entity, Hub.champColor, Hub.champRGBEnabled, 5, 1, -2, 0, Hub.champThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'champ', 5, 1, -2, 0]);
 		} else if (Hub.sycophantEnabled && entityName.includes('Sycophant')) {
 			stringnew.push([entity, 0.05, Hub.sycophantThroughWallEnabled]);
-			boxesnew.push([entity, Hub.sycophantColor, Hub.sycophantRGBEnabled, 5, 1, -2, 0, Hub.sycophantThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'sycophant', 5, 1, -2, 0]);
 		} else if (Hub.ratEnabled && Utils.containsAll(entityName, 'Rat', '❤')) {
-			boxesnew.push([entity, Hub.ratColor, Hub.ratRGBEnabled, 1, 1, -1, 0, Hub.ratThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'rat', 1, 1, -1, 0]);
 		} else if (Hub.inquisitorEnabled && entityName.includes('Inquisitor')) {
 			stringnew.push([entity, 0.05, Hub.inquisitorThroughWallEnabled]);
-			boxesnew.push([entity, Hub.inquisitorColor, Hub.inquisitorRGBEnabled, 5, 1, -2, 0, Hub.inquisitorThroughWallEnabled]);
+			boxesnew.push([entity, Hub, 'inquisitor', 5, 1, -2, 0]);
 		}
 	}
 	if (!Hub.parkEnabled) return;
@@ -258,16 +258,16 @@ function renderThePark(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (ThePark.packmasterEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Sven') && !entityName.includes('Pup')) {
 			stringnew.push([entity, 0.05, ThePark.packmasterThroughWallEnabled]);
-			boxesnew.push([entity, ThePark.packmasterColor, ThePark.packmasterRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.packmasterThroughWallEnabled]);
+			boxesnew.push([entity, ThePark, 'packmaster', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.alphaEnabled && entityName.includes('Alpha') && !entityName.includes('Soul')) {
 			stringnew.push([entity, 0.05, ThePark.alphaThroughWallEnabled]);
-			boxesnew.push([entity, ThePark.alphaColor, ThePark.alphaRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.alphaThroughWallEnabled]);
+			boxesnew.push([entity, ThePark, 'alpha', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.followerEnabled && entityName.includes('Follower')) {
 			stringnew.push([entity, 0.05, ThePark.followerThroughWallEnabled]);
-			boxesnew.push([entity, ThePark.followerColor, ThePark.followerRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.followerThroughWallEnabled]);
+			boxesnew.push([entity, ThePark, 'follower', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.enforcerEnabled && entityName.includes('Enforcer')) {
 			stringnew.push([entity, 0.05, ThePark.enforcerThroughWallEnabled]);
-			boxesnew.push([entity, ThePark.enforcerColor, ThePark.enforcerRGBEnabled, 5, 0.6, -0.75, -0.25, ThePark.enforcerThroughWallEnabled]);
+			boxesnew.push([entity, ThePark, 'enforcer', 5, 0.6, -0.75, -0.25]);
 		}
 	}
 }
@@ -276,27 +276,27 @@ function renderSpidersDen(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (SpidersDen.fatherEnabled && entityName.includes(SBSymbol.SLAYER)) {
 			stringnew.push([entity, 0.05, SpidersDen.fatherThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.fatherColor, SpidersDen.fatherRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.fatherThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'father', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.mutantEnabled && entityName.includes('Mutant')) {
 			stringnew.push([entity, 0.05, SpidersDen.mutantThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.mutantColor, SpidersDen.mutantRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.mutantThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'mutant', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.beastEnabled && entityName.includes('Beast') && !entityName.includes('Bramass')) {
 			stringnew.push([entity, 0.05, SpidersDen.beastThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.beastColor, SpidersDen.beastRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.beastThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'beast', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.verminEnabled && entityName.includes('Vermin')) {
 			stringnew.push([entity, 0.05, SpidersDen.verminThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.verminColor, SpidersDen.verminRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.verminThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'vermin', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.keeperEnabled && entityName.includes('Keeper')) {
 			stringnew.push([entity, 0.05, SpidersDen.keeperThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.keeperColor, SpidersDen.keeperRGBEnabled, 5, 0.75, -0.5, -0.3, SpidersDen.keeperThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'keeper', 5, 0.75, -0.5, -0.3]);
 		} else if (SpidersDen.motherEnabled && entityName.includes('Mother')) {
 			stringnew.push([entity, 0.05, SpidersDen.motherThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.motherColor, SpidersDen.motherRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.motherThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'mother', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.broodEnabled && entityName.includes('Brood')) {
-			boxesnew.push([entity, SpidersDen.broodColor, SpidersDen.broodRGBEnabled, 5, 0.75, -0.5, -0.3, SpidersDen.broodThroughWallEnabled]);
-		} else if (SpidersDen.arachneEnabled && entityName.includes('Arachne') && Utils.containsNone(entityName, 'Brood', 'Fragment', 'Keeper')) {
+			boxesnew.push([entity, SpidersDen, 'brood', 5, 0.75, -0.5, -0.3]);
+		} else if (SpidersDen.arachneEnabled && entityName.includes('Arachne') && !entityName.includes('Fragment')) {
 			stringnew.push([entity, 0.05, SpidersDen.arachneThroughWallEnabled]);
-			boxesnew.push([entity, SpidersDen.arachneColor, SpidersDen.arachneRGBEnabled, 5, 1.5, -1, -0.25, SpidersDen.arachneThroughWallEnabled]);
+			boxesnew.push([entity, SpidersDen, 'arachne', 5, 1.5, -1, -0.25]);
 		}
 	}
 }
@@ -305,42 +305,42 @@ function renderTheEnd(entity, mcEntity, entityName) {
 	if (SkyblockUtilities.getLocation() === Location.DRAGONS_NEST) {
 		if (mcEntity instanceof MCEntity.ITEM) {
 			if (TheEnd.eyeEnabled && getSkullOwner(mcEntity.func_92059_d()) === SummoningEyeSkullOwner) { // getEntityItem()
-				boxesnew.push([entity, TheEnd.eyeColor, TheEnd.eyeRGBEnabled, 5, 0.5, 4, 0, TheEnd.eyeThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd, 'eye', 5, 0.5, 4, 0]);
 			}
 		} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 			if (TheEnd.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
 				stringnew.push([entity, 0.05, TheEnd.zealotThroughWallEnabled]);
-				boxesnew.push([entity, TheEnd.zealotColor, TheEnd.zealotRGBEnabled, 5, 1, -3, 0, TheEnd.zealotThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd, 'zealot', 5, 1, -3, 0]);
 			}
 		} else if (mcEntity instanceof MCEntity.DRAGON) {
 			if (TheEnd.dragonEnabled) {
-				boxesnew.push([entity, TheEnd.dragonColor, TheEnd.dragonRGBEnabled, 5, 15, 8, 0, TheEnd.dragonThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd, 'dragon', 5, 15, 8, 0]);
 			}
 		} else if (mcEntity instanceof MCEntity.ENDER_CRYSTAL) {
 			if (TheEnd.crystalEnabled) {
-				boxesnew.push([entity, TheEnd.crystalColor, TheEnd.crystalRGBEnabled, 5, 1, 2, 0, TheEnd.crystalThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd, 'crystal', 5, 1, 2, 0]);
 			}
 		} else if (mcEntity instanceof MCEntity.IRON_GOLEM) {
 			if (TheEnd.protectorEnabled) {
-				boxesnew.push([entity, TheEnd.protectorColor, TheEnd.protectorRGBEnabled, 4, 1.7, 2.7, 0, TheEnd.protectorThroughWallEnabled]);
+				boxesnew.push([entity, TheEnd, 'protector', 4, 1.7, 2.7, 0]);
 			}
 		}
 	}
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (TheEnd.seraphEnabled && entityName.includes(SBSymbol.SLAYER)) {
 			stringnew.push([entity, 0.05, TheEnd.seraphThroughWallEnabled]);
-			boxesnew.push([entity, TheEnd.seraphColor, TheEnd.seraphRGBEnabled, 5, 1, -3, 0, TheEnd.seraphThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd, 'seraph', 5, 1, -3, 0]);
 		} else if (TheEnd.devoteeEnabled && entityName.includes('Devotee')) {
 			stringnew.push([entity, 0.05, TheEnd.devoteeThroughWallEnabled]);
-			boxesnew.push([entity, TheEnd.devoteeColor, TheEnd.devoteeRGBEnabled, 5, 1, -3, 0, TheEnd.devoteeThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd, 'devotee', 5, 1, -3, 0]);
 		} else if (TheEnd.radicalEnabled && entityName.includes('Radical')) {
 			stringnew.push([entity, 0.05, TheEnd.radicalThroughWallEnabled]);
-			boxesnew.push([entity, TheEnd.radicalColor, TheEnd.radicalRGBEnabled, 5, 1, -3, 0, TheEnd.radicalThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd, 'radical', 5, 1, -3, 0]);
 		} else if (TheEnd.maniacEnabled && entityName.includes('Maniac')) {
 			stringnew.push([entity, 0.05, TheEnd.maniacThroughWallEnabled]);
-			boxesnew.push([entity, TheEnd.maniacColor, TheEnd.maniacRGBEnabled, 5, 1, -3, 0, TheEnd.maniacThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd, 'maniac', 5, 1, -3, 0]);
 		} else if (TheEnd.weirdEnabled && getSkullTexture(mcEntity.func_71124_b(4)) === WeirdHeadTexture) { // getEquipmentInSlot()
-			boxesnew.push([entity, TheEnd.weirdColor, TheEnd.weirdRGBEnabled, 5, 1, 1, 0.5, TheEnd.weirdThroughWallEnabled]);
+			boxesnew.push([entity, TheEnd, 'weird', 5, 1, 1, 0.5]);
 		}
 	}
 }
@@ -349,7 +349,7 @@ function renderDeepCaverns(entity, mcEntity, entityName) {
 	if (SkyblockUtilities.getLocation() === Location.GUNPOWDER_MINES) {
 		if (mcEntity instanceof MCEntity.CREEPER) {
 			if (DeepCaverns.creeperEnabled) {
-				boxesnew.push([entity, DeepCaverns.creeperColor, DeepCaverns.creeperRGBEnabled, 1, 1, 2, 0, DeepCaverns.creeperThroughWallEnabled]);
+				boxesnew.push([entity, DeepCaverns, 'creeper', 1, 1, 2, 0]);
 			}
 		}
 	}
@@ -360,21 +360,21 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 		if (DwarvenMines.powderGhastEnabled && entityName.includes('Powder Ghast')) {
 			isPowderGhast = true;
 			stringnew.push([entity, 0.1, DwarvenMines.powderGhastThroughWallEnabled]);
-			boxesnew.push([entity, DwarvenMines.powderGhastColor, DwarvenMines.powderGhastRGBEnabled, 2, 4, -4, 0, DwarvenMines.powderGhastThroughWallEnabled]);
+			boxesnew.push([entity, DwarvenMines, 'powderGhast', 2, 4, -4, 0]);
 		}
 	} else if (mcEntity instanceof MCEntity.IRON_GOLEM) {
 		if (DwarvenMines.superprotectronEnabled) {
-			boxesnew.push([entity, DwarvenMines.superprotectronColor, DwarvenMines.superprotectronRGBEnabled, 4, 1.7, 2.7, 0, DwarvenMines.superprotectronThroughWallEnabled]);
+			boxesnew.push([entity, DwarvenMines, 'superprotectron', 4, 1.7, 2.7, 0]);
 		}
 	} else if (mcEntity instanceof MCEntity.ARROW) {
 		if (DwarvenMines.arrowEnabled && isPowderGhast) {
-			boxesnew.push([entity, DwarvenMines.arrowColor, DwarvenMines.arrowRGBEnabled, 0.5, 0.5, 0.5, 0, DwarvenMines.arrowThroughWallEnabled]);
+			boxesnew.push([entity, DwarvenMines, 'arrow', 0.5, 0.5, 0.5, 0]);
 		}
 	}
 	if (SkyblockUtilities.getLocation() === Location.THE_MIST) {
 		if (mcEntity instanceof MCEntity.CREEPER) {
 			if (DwarvenMines.ghostEnabled) {
-				boxesnew.push([entity, DwarvenMines.ghostColor, DwarvenMines.ghostRGBEnabled, 1, 1, 2, 0, DwarvenMines.ghostThroughWallEnabled]);
+				boxesnew.push([entity, DwarvenMines, 'ghost', 1, 1, 2, 0]);
 			}
 		}
 	}
@@ -384,7 +384,7 @@ function renderTheFarmingIslands(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		TrevorNames.forEach(trevor => {
 			if (TheFarmingIslands.trevorEnabled && entityName.includes(trevor)) {
-				boxesnew.push([entity, TheFarmingIslands.trevorColor, TheFarmingIslands.trevorRGBEnabled, 1, 1, -1, 0, TheFarmingIslands.trevorThroughWallEnabled]);
+				boxesnew.push([entity, TheFarmingIslands, 'trevor', 1, 1, -1, 0]);
 			}
 		});
 	}
@@ -393,24 +393,24 @@ function renderTheFarmingIslands(entity, mcEntity, entityName) {
 function renderDungeon(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.BAT) {
 		if (Dungeon.batEnabled) {
-			boxesnew.push([entity, Dungeon.batColor, Dungeon.batRGBEnabled, 1, 0.5, 0.5, 0, Dungeon.batThroughWallEnabled]);
+			boxesnew.push([entity, Dungeon, 'bat', 1, 0.5, 0.5, 0]);
 		}
 	} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Dungeon.felsEnabled && Utils.containsAll(entityName, 'Fels', SBSymbol.REQUIRE_STAR)) {
-			boxesnew.push([entity, Dungeon.felsColor, Dungeon.felsRGBEnabled, 3, 1, -3, 0, Dungeon.felsThroughWallEnabled]);
+			boxesnew.push([entity, Dungeon, 'fels', 3, 1, -3, 0]);
 		} else if (Dungeon.requiredEnabled && Utils.containsOne(entityName, SBSymbol.REQUIRE_STAR, 'Shadow Assassin', 'Lost Adventurer', 'Angry Archeologist')) {
-			boxesnew.push([entity, Dungeon.requiredColor, Dungeon.requiredRGBEnabled, 2, 1, -2, 0, Dungeon.requiredThroughWallEnabled]);
+			boxesnew.push([entity, Dungeon, 'required', 2, 1, -2, 0]);
 		}
 		switch(SkyblockUtilities.getFloor()) {
 			case 1:
 				if (Dungeon.bonzoEnabled && entityName.includes('Bonzo')) {
-					boxesnew.push([entity, Dungeon.bonzoColor, Dungeon.bonzoRGBEnabled, 3, 1, -2, 0, Dungeon.bonzoThroughWallEnabled]);
+					boxesnew.push([entity, Dungeon, 'bonzo', 3, 1, -2, 0]);
 				}
 				break;
 			case 5:
 				if (Dungeon.lividEnabled && entityName.includes('Livid')) {
 					if (entity.getName().charAt(1) === getLividColor().charAt(1)) {
-						boxesnew.push([entity, Dungeon.lividColor, Dungeon.lividRGBEnabled, 3, 1, -2, 0, Dungeon.lividThroughWallEnabled]);
+						boxesnew.push([entity, Dungeon, 'livid', 3, 1, -2, 0]);
 					}
 				}
 				break;
@@ -506,16 +506,17 @@ function getSkullOwner(itemstack) {
 
 function getSkullTexture(itemstack) {
 	if (itemstack === null) return '';
-	const NbtData = new Item(itemstack).getNBT();
-	const NBTBase = NbtData.getCompoundTag('tag').getCompoundTag('SkullOwner').getCompoundTag('Properties').getTag('textures');
+	const NBTBase = new Item(itemstack).getNBT().getCompoundTag('tag').getCompoundTag('SkullOwner').getCompoundTag('Properties').getTag('textures');
 	if (NBTBase === null) return '';
 	return NBTBase.toString().match(/Value:".*"/)[0].replace(/Value:"/, '').replace('"', '');
 }
 
-function drawBoxAroundEntity(entity, color, isRGB, lineWidth, width, height, expandY, throughWall, partialTicks) {
+function drawBoxAroundEntity(entity, area, target, boldness, width, height, topSpace, partialTicks) {
+	const color = area[target + 'Color'];
+	const throughWall = area[target + 'ThroughWallEnabled'];
 	GL11.glBlendFunc(770, 771);
 	GL11.glEnable(GL11.GL_BLEND);
-	GL11.glLineWidth(lineWidth);
+	GL11.glLineWidth(boldness);
 	GL11.glDisable(GL11.GL_TEXTURE_2D);
 	if (throughWall) GL11.glDisable(GL11.GL_DEPTH_TEST);
 	GL11.glDepthMask(false);
@@ -548,13 +549,13 @@ function drawBoxAroundEntity(entity, color, isRGB, lineWidth, width, height, exp
 		[-0.5, 0.0, 0.5]
 	];
 
-	const colors = isRGB ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
+	const colors = area[target + 'RGBEnabled'] ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
 	let counter = 0;
 	Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
 	positions.forEach(pos => {
 		Tessellator.pos(
 			entity.getX() + (entity.getX() - entity.getLastX()) * partialTicks + pos[0] * width,
-			entity.getY() + expandY + (entity.getY() - entity.getLastY()) * partialTicks + pos[1] * height,
+			entity.getY() + topSpace + (entity.getY() - entity.getLastY()) * partialTicks + pos[1] * height,
 			entity.getZ() + (entity.getZ() - entity.getLastZ()) * partialTicks + pos[2] * width
 		).tex(0, 0);
 
