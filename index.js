@@ -72,7 +72,7 @@ register('step', () => {
 register('renderWorld', ticks => {
 	if (!General.enabled) return;
 	boxes.forEach(render => drawBoxAroundEntity(...render, ticks));
-	strings.forEach(render => drawNameThroughWalls(...render));
+	strings.forEach(render => drawName(...render));
 	blocks.forEach(render => drawBoxAroundBlock(...render));
 });
 
@@ -226,27 +226,27 @@ function command(args) {
 function renderHub(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (Hub.revenantEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Horror')) {
-			stringnew.push([entity, 0.05, Hub.revenantThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'revenant']);
 			boxesnew.push([entity, Hub, 'revenant', 5, 1, -2, 0]);
 		} else if (Hub.atonedRevEnabled && entityName.includes('Atoned Revenant')) {
-			stringnew.push([entity, 0.05, Hub.atonedRevThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'atonedRev']);
 			boxesnew.push([entity, Hub, 'atonedRev', 5, 1, -2, 0]);
 		} else if (Hub.atonedChampEnabled && entityName.includes('Atoned Champion')) {
-			stringnew.push([entity, 0.05, Hub.atonedChampThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'atonedChamp']);
 			boxesnew.push([entity, Hub, 'atonedChamp', 5, 1, -2, 0]);
 		} else if (Hub.deformedEnabled && entityName.includes('Deformed')) {
-			stringnew.push([entity, 0.05, Hub.deformedThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'deformed']);
 			boxesnew.push([entity, Hub, 'deformed', 5, 1, -2, 0]);
 		} else if (Hub.champEnabled && entityName.includes('Revenant Champion')) {
-			stringnew.push([entity, 0.05, Hub.champThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'champ']);
 			boxesnew.push([entity, Hub, 'champ', 5, 1, -2, 0]);
 		} else if (Hub.sycophantEnabled && entityName.includes('Sycophant')) {
-			stringnew.push([entity, 0.05, Hub.sycophantThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'sycophant']);
 			boxesnew.push([entity, Hub, 'sycophant', 5, 1, -2, 0]);
 		} else if (Hub.ratEnabled && Utils.containsAll(entityName, 'Rat', '❤')) {
 			boxesnew.push([entity, Hub, 'rat', 1, 1, -1, 0]);
 		} else if (Hub.inquisitorEnabled && entityName.includes('Inquisitor')) {
-			stringnew.push([entity, 0.05, Hub.inquisitorThroughWallEnabled]);
+			stringnew.push([entity, 0.05, Hub, 'inquisitor']);
 			boxesnew.push([entity, Hub, 'inquisitor', 5, 1, -2, 0]);
 		}
 	}
@@ -257,16 +257,16 @@ function renderHub(entity, mcEntity, entityName) {
 function renderThePark(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (ThePark.packmasterEnabled && Utils.containsAll(entityName, SBSymbol.SLAYER, 'Sven') && !entityName.includes('Pup')) {
-			stringnew.push([entity, 0.05, ThePark.packmasterThroughWallEnabled]);
+			stringnew.push([entity, 0.05, ThePark, 'packmaster']);
 			boxesnew.push([entity, ThePark, 'packmaster', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.alphaEnabled && entityName.includes('Alpha') && !entityName.includes('Soul')) {
-			stringnew.push([entity, 0.05, ThePark.alphaThroughWallEnabled]);
+			stringnew.push([entity, 0.05, ThePark, 'alpha']);
 			boxesnew.push([entity, ThePark, 'alpha', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.followerEnabled && entityName.includes('Follower')) {
-			stringnew.push([entity, 0.05, ThePark.followerThroughWallEnabled]);
+			stringnew.push([entity, 0.05, ThePark, 'follower']);
 			boxesnew.push([entity, ThePark, 'follower', 5, 0.6, -0.75, -0.25]);
 		} else if (ThePark.enforcerEnabled && entityName.includes('Enforcer')) {
-			stringnew.push([entity, 0.05, ThePark.enforcerThroughWallEnabled]);
+			stringnew.push([entity, 0.05, ThePark, 'enforcer']);
 			boxesnew.push([entity, ThePark, 'enforcer', 5, 0.6, -0.75, -0.25]);
 		}
 	}
@@ -275,27 +275,27 @@ function renderThePark(entity, mcEntity, entityName) {
 function renderSpidersDen(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (SpidersDen.fatherEnabled && entityName.includes(SBSymbol.SLAYER)) {
-			stringnew.push([entity, 0.05, SpidersDen.fatherThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'father']);
 			boxesnew.push([entity, SpidersDen, 'father', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.mutantEnabled && entityName.includes('Mutant')) {
-			stringnew.push([entity, 0.05, SpidersDen.mutantThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'mutant']);
 			boxesnew.push([entity, SpidersDen, 'mutant', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.beastEnabled && entityName.includes('Beast') && !entityName.includes('Bramass')) {
-			stringnew.push([entity, 0.05, SpidersDen.beastThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'beast']);
 			boxesnew.push([entity, SpidersDen, 'beast', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.verminEnabled && entityName.includes('Vermin')) {
-			stringnew.push([entity, 0.05, SpidersDen.verminThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'vermin']);
 			boxesnew.push([entity, SpidersDen, 'vermin', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.keeperEnabled && entityName.includes('Keeper')) {
-			stringnew.push([entity, 0.05, SpidersDen.keeperThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'keeper']);
 			boxesnew.push([entity, SpidersDen, 'keeper', 5, 0.75, -0.5, -0.3]);
 		} else if (SpidersDen.motherEnabled && entityName.includes('Mother')) {
-			stringnew.push([entity, 0.05, SpidersDen.motherThroughWallEnabled]);
+			stringnew.push([entity, 0.05, SpidersDen, 'mother']);
 			boxesnew.push([entity, SpidersDen, 'mother', 5, 1.5, -1, -0.25]);
 		} else if (SpidersDen.broodEnabled && entityName.includes('Brood')) {
 			boxesnew.push([entity, SpidersDen, 'brood', 5, 0.75, -0.5, -0.3]);
-		} else if (SpidersDen.arachneEnabled && entityName.includes('Arachne') && !entityName.includes('Fragment')) {
-			stringnew.push([entity, 0.05, SpidersDen.arachneThroughWallEnabled]);
+		} else if (SpidersDen.arachneEnabled && entityName.includes('Arachne') && Utils.containsNone(entityName, 'Fragment', 'Brood', 'Keeper')) {
+			stringnew.push([entity, 0.05, SpidersDen, 'arachne']);
 			boxesnew.push([entity, SpidersDen, 'arachne', 5, 1.5, -1, -0.25]);
 		}
 	}
@@ -309,7 +309,7 @@ function renderTheEnd(entity, mcEntity, entityName) {
 			}
 		} else if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 			if (TheEnd.zealotEnabled && Utils.containsAll(entityName, '2000/2000', 'Zealot')) {
-				stringnew.push([entity, 0.05, TheEnd.zealotThroughWallEnabled]);
+				stringnew.push([entity, 0.05, TheEnd, 'zealot']);
 				boxesnew.push([entity, TheEnd, 'zealot', 5, 1, -3, 0]);
 			}
 		} else if (mcEntity instanceof MCEntity.DRAGON) {
@@ -328,16 +328,16 @@ function renderTheEnd(entity, mcEntity, entityName) {
 	}
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (TheEnd.seraphEnabled && entityName.includes(SBSymbol.SLAYER)) {
-			stringnew.push([entity, 0.05, TheEnd.seraphThroughWallEnabled]);
+			stringnew.push([entity, 0.05, TheEnd, 'seraph']);
 			boxesnew.push([entity, TheEnd, 'seraph', 5, 1, -3, 0]);
 		} else if (TheEnd.devoteeEnabled && entityName.includes('Devotee')) {
-			stringnew.push([entity, 0.05, TheEnd.devoteeThroughWallEnabled]);
+			stringnew.push([entity, 0.05, TheEnd, 'devotee']);
 			boxesnew.push([entity, TheEnd, 'devotee', 5, 1, -3, 0]);
 		} else if (TheEnd.radicalEnabled && entityName.includes('Radical')) {
-			stringnew.push([entity, 0.05, TheEnd.radicalThroughWallEnabled]);
+			stringnew.push([entity, 0.05, TheEnd, 'radical']);
 			boxesnew.push([entity, TheEnd, 'radical', 5, 1, -3, 0]);
 		} else if (TheEnd.maniacEnabled && entityName.includes('Maniac')) {
-			stringnew.push([entity, 0.05, TheEnd.maniacThroughWallEnabled]);
+			stringnew.push([entity, 0.05, TheEnd, 'maniac']);
 			boxesnew.push([entity, TheEnd, 'maniac', 5, 1, -3, 0]);
 		} else if (TheEnd.weirdEnabled && getSkullTexture(mcEntity.func_71124_b(4)) === WeirdHeadTexture) { // getEquipmentInSlot()
 			boxesnew.push([entity, TheEnd, 'weird', 5, 1, 1, 0.5]);
@@ -359,7 +359,7 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
 		if (DwarvenMines.powderGhastEnabled && entityName.includes('Powder Ghast')) {
 			isPowderGhast = true;
-			stringnew.push([entity, 0.1, DwarvenMines.powderGhastThroughWallEnabled]);
+			stringnew.push([entity, 0.1, DwarvenMines, 'powderGhast']);
 			boxesnew.push([entity, DwarvenMines, 'powderGhast', 2, 4, -4, 0]);
 		}
 	} else if (mcEntity instanceof MCEntity.IRON_GOLEM) {
@@ -637,8 +637,9 @@ function drawBoxAroundBlock(position, color, isRGB, lineWidth, width, height, ex
 	GL11.glDisable(GL11.GL_BLEND);
 }
 
-function drawNameThroughWalls(entity, scale, throughWall) {
-	Utils.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), Renderer.WHITE, false, scale, false, throughWall);
+function drawName(entity, scale, area, target) {
+	if (!area[target + 'Enabled']) return;
+	Utils.drawString(entity.getName(), entity.getX(), entity.getY() + entity.getHeight() + 0.75, entity.getZ(), 0, false, scale, false, area[target + 'ThroughWallEnabled']);
 	entity.entity.func_174805_g(false); // setAlwaysRenderNameTag()
 }
 
