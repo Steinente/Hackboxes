@@ -38,8 +38,7 @@ const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
 const WeirdHeadTexture = 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWIwNzU5NGUyZGYyNzM5MjFhNzdjMTAxZDBiZmRmYTExMTVhYmVkNWI5YjIwMjllYjQ5NmNlYmE5YmRiYjRiMyJ9fX0=';
 const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'Elusive'];
-const GlyphPlacePitch = 0.4920634925365448;
-const GlyphRemovePitch = 0.4920634925365448;
+const GlyphPitch = 0.4920634925365448;
 
 let firstTimeSB = false;
 let rgb = [1, 0, 0];
@@ -125,11 +124,11 @@ register('tick', ticks => {
 register('soundPlay', (pos, name, vol, pitch, cat, event) => {
 	if (SkyblockUtilities.getArea() !== Area.THE_END && AreaVisibility[Area.THE_END] && !TheEnd.glyphEnabled) return;
 	const mcPitch = event.sound.func_147655_f(); // getPitch()
-	if (name.includes('game.neutral.hurt') && mcPitch === GlyphPlacePitch) {
+	if (name.includes('game.neutral.hurt') && mcPitch === GlyphPitch) {
 		blocks.push([[pos.getX(), pos.getY(), pos.getZ()], TheEnd.glyphColor, TheEnd.glyphRGBEnabled, 5, 1, 3, 0, TheEnd.glyphThroughWallEnabled]);
 		setTimeout(() => removeBlock(pos), 10000);
 	}
-	if (name.includes('random.break') && mcPitch === GlyphRemovePitch) {
+	if (name.includes('random.break') && mcPitch === GlyphPitch) {
 		removeBlock(pos);
 	}
 });
@@ -672,8 +671,8 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}added Endstone Protector${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed an error${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}code revamp${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}fixed entity name is not rendering if box is disabled${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
