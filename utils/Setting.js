@@ -21,6 +21,7 @@ const Setting = {
     End: 'The End',
     DeepCaverns: 'Deep Caverns',
     DwarvenMines: 'Dwarven Mines',
+    CrystalHollows: 'Crystal Hollows',
     FarmingIslands: 'The Farming Islands',
     Dungeon: 'Dungeon',
     Misc: 'Misc',
@@ -44,6 +45,7 @@ const Setting = {
     Champ: 'Revenant Champion',
     Sycophant: 'Revenant Sycophant',
     Rat: 'Rat',
+    Horseman: 'Headless Horseman',
     Inquisitor: 'Minos Inquisitor',
     Packmaster: 'Sven Packmaster',
     Alpha: 'Sven Alpha',
@@ -78,6 +80,9 @@ const Setting = {
     Livid: 'Livid',
     Bat: 'Bat',
     Fels: 'Fels',
-    RequiredMobs: 'Required Mobs'
+    RequiredMobs: 'Required Mobs',
+    Corleone: 'Boss Corleone',
+    KeyGuardian: 'Jungle Key Guardian',
+    Worm: 'Worm'
 }
 export { Setting as default };
