@@ -19,6 +19,7 @@ import SpidersDen from './configfiles/SpidersDen';
 import TheEnd from './configfiles/TheEnd';
 import DeepCaverns from './configfiles/DeepCaverns';
 import DwarvenMines from './configfiles/DwarvenMines';
+import CrystalHollows from './configfiles/CrystalHollows';
 import TheFarmingIslands from './configfiles/TheFarmingIslands';
 import Dungeon from './configfiles/Dungeon';
 
@@ -32,13 +33,39 @@ const Latest = `https://github.com/Steinente/${ModuleName}/releases/latest`;
 const ClickableLatest = new TextComponent(`${Color.BLUE}${Latest}`).setClick('open_url', `${Latest}`);
 const ToggleModuleKeybind = new KeyBind('Toggle module', 35, ModuleName);
 const ToggleRequiredMobsKeybind = new KeyBind('Toggle required dungeon mobs', 19, ModuleName);
-const UsedAreas = [Area.HUB, Area.THE_PARK, Area.SPIDERS_DEN, Area.THE_END, Area.DEEP_CAVERNS, Area.DWARVEN_MINES, Area.THE_FARMING_ISLANDS, Area.DUNGEON];
+const UsedAreas = [Area.HUB, Area.THE_PARK, Area.SPIDERS_DEN, Area.THE_END, Area.DEEP_CAVERNS, Area.DWARVEN_MINES, Area.CRYSTAL_HOLLOWS, Area.THE_FARMING_ISLANDS, Area.DUNGEON];
 const StartSeparator = `${Color.YELLOW}-------------- ${Color.GOLD}${ModuleName} ${Color.YELLOW}--------------${Color.LINE_BREAK}`;
 const EndSeparator = `${Color.YELLOW}--------------------------------------`;
 const SummoningEyeSkullOwner = '00a702b9-7bad-3205-a04b-52478d8c0e7f';
 const WeirdHeadTexture = 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWIwNzU5NGUyZGYyNzM5MjFhNzdjMTAxZDBiZmRmYTExMTVhYmVkNWI5YjIwMjllYjQ5NmNlYmE5YmRiYjRiMyJ9fX0=';
 const TrevorNames = ['Trackable', 'Untrackable', 'Undetected', 'Endangered', 'Elusive'];
 const GlyphPitch = 0.4920634925365448;
+const drawBoxPositions = [
+	[0.5, 0.0, 0.5],
+	[0.5, 1.0, 0.5],
+	[-0.5, 0.0, -0.5],
+	[-0.5, 1.0, -0.5],
+	[0.5, 0.0, -0.5],
+	[0.5, 1.0, -0.5],
+	[-0.5, 0.0, 0.5],
+	[-0.5, 1.0, 0.5],
+	[0.5, 1.0, -0.5],
+	[0.5, 1.0, 0.5],
+	[-0.5, 1.0, 0.5],
+	[0.5, 1.0, 0.5],
+	[-0.5, 1.0, -0.5],
+	[0.5, 1.0, -0.5],
+	[-0.5, 1.0, -0.5],
+	[-0.5, 1.0, 0.5],
+	[0.5, 0.0, -0.5],
+	[0.5, 0.0, 0.5],
+	[-0.5, 0.0, 0.5],
+	[0.5, 0.0, 0.5],
+	[-0.5, 0.0, -0.5],
+	[0.5, 0.0, -0.5],
+	[-0.5, 0.0, -0.5],
+	[-0.5, 0.0, 0.5]
+];
 
 let firstTimeSB = false;
 let rgb = [1, 0, 0];
@@ -122,7 +149,9 @@ register('tick', ticks => {
 });
 
 register('soundPlay', (pos, name, vol, pitch, cat, event) => {
-	if (SkyblockUtilities.getArea() !== Area.THE_END && AreaVisibility[Area.THE_END] && !TheEnd.glyphEnabled) return;
+	if (SkyblockUtilities.getArea() !== Area.THE_END) return;
+	if (!AreaVisibility[Area.THE_END]) return;
+	if (!TheEnd.glyphEnabled) return;
 	const mcPitch = event.sound.func_147655_f(); // getPitch()
 	if (name.includes('game.neutral.hurt') && mcPitch === GlyphPitch) {
 		blocks.push([[pos.getX(), pos.getY(), pos.getZ()], TheEnd.glyphColor, TheEnd.glyphRGBEnabled, 5, 1, 3, 0, TheEnd.glyphThroughWallEnabled]);
@@ -182,6 +211,9 @@ function command(args) {
 			case 'mines':
 				DwarvenMines.openGUI();
 				break;
+			case 'hollows':
+				CrystalHollows.openGUI();
+				break;
 			case 'farming':
 				TheFarmingIslands.openGUI();
 				break;
@@ -204,6 +236,7 @@ function command(args) {
 					`${Color.GRAY}● ${Color.GOLD}End${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Caverns${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Mines${Color.LINE_BREAK}` +
+					`${Color.GRAY}● ${Color.GOLD}Hollows${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Farming${Color.LINE_BREAK}` +
 					`${Color.GRAY}● ${Color.GOLD}Dungeon`;
 				const MessageStr = new Message(
@@ -247,6 +280,13 @@ function renderHub(entity, mcEntity, entityName) {
 		} else if (Hub.inquisitorEnabled && entityName.includes('Inquisitor')) {
 			stringnew.push([entity, 0.05, Hub, 'inquisitor']);
 			boxesnew.push([entity, Hub, 'inquisitor', 5, 1, -2, 0]);
+		} else if (Hub.horsemanEnabled && entityName.includes('Headless Horseman')) {
+			stringnew.push([entity, 0.05, Hub, 'horseman']);
+		}
+	} else if (mcEntity instanceof MCEntity.HORSE) {
+		if (Hub.horsemanEnabled && mcEntity.field_70153_n instanceof MCEntity.SKELETON) { // riddenByEntity
+			boxesnew.push([entity, Hub, 'horseman', 5, 0.75, 2.55, 0.85]);
+			boxesnew.push([entity, Hub, 'horseman', 5, 1.5, 1.6, 0]);
 		}
 	}
 	if (!Hub.parkEnabled) return;
@@ -377,6 +417,22 @@ function renderDwarvenMines(entity, mcEntity, entityName) {
 			}
 		}
 	}
+}
+
+function renderCrystalHollows(entity, mcEntity, entityName) {
+	if (mcEntity instanceof MCEntity.ARMOR_STAND) {
+		if (CrystalHollows.corleoneEnabled && entityName.includes('Corleone')) {
+			stringnew.push([entity, 0.1, CrystalHollows, 'corleone']);
+			boxesnew.push([entity, CrystalHollows, 'corleone', 5, 1, -2, 0]);
+		} else if (CrystalHollows.keyGuardianEnabled && entityName.includes('Key Guardian')) {
+			stringnew.push([entity, 0.1, CrystalHollows, 'keyGuardian']);
+			boxesnew.push([entity, CrystalHollows, 'keyGuardian', 5, 1, -2, 0]);
+		} else if (CrystalHollows.wormEnabled && entityName.includes('Worm')) {
+			stringnew.push([entity, 0.1, CrystalHollows, 'worm']);
+			boxesnew.push([entity, CrystalHollows, 'worm', 5, 1, -1, 0]);
+		}
+	}
+	
 }
 
 function renderTheFarmingIslands(entity, mcEntity, entityName) {
@@ -521,37 +577,10 @@ function drawBoxAroundEntity(entity, area, target, boldness, width, height, topS
 	GL11.glDepthMask(false);
 	GlStateManager.func_179094_E(); // pushMatrix()
 
-	let positions = [
-		[0.5, 0.0, 0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 0.0, -0.5],
-		[-0.5, 1.0, -0.5],
-		[0.5, 0.0, -0.5],
-		[0.5, 1.0, -0.5],
-		[-0.5, 0.0, 0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 1.0, -0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 1.0, -0.5],
-		[0.5, 1.0, -0.5],
-		[-0.5, 1.0, -0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 0.0, -0.5],
-		[0.5, 0.0, 0.5],
-		[-0.5, 0.0, 0.5],
-		[0.5, 0.0, 0.5],
-		[-0.5, 0.0, -0.5],
-		[0.5, 0.0, -0.5],
-		[-0.5, 0.0, -0.5],
-		[-0.5, 0.0, 0.5]
-	];
-
 	const colors = area[target + 'RGBEnabled'] ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
 	let counter = 0;
 	Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
-	positions.forEach(pos => {
+	drawBoxPositions.forEach(pos => {
 		Tessellator.pos(
 			entity.getX() + (entity.getX() - entity.getLastX()) * partialTicks + pos[0] * width,
 			entity.getY() + topSpace + (entity.getY() - entity.getLastY()) * partialTicks + pos[1] * height,
@@ -583,37 +612,10 @@ function drawBoxAroundBlock(position, color, isRGB, lineWidth, width, height, ex
 	GL11.glDepthMask(false);
 	GlStateManager.func_179094_E(); // pushMatrix()
 
-	let positions = [
-		[0.5, 0.0, 0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 0.0, -0.5],
-		[-0.5, 1.0, -0.5],
-		[0.5, 0.0, -0.5],
-		[0.5, 1.0, -0.5],
-		[-0.5, 0.0, 0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 1.0, -0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 1.0, 0.5],
-		[-0.5, 1.0, -0.5],
-		[0.5, 1.0, -0.5],
-		[-0.5, 1.0, -0.5],
-		[-0.5, 1.0, 0.5],
-		[0.5, 0.0, -0.5],
-		[0.5, 0.0, 0.5],
-		[-0.5, 0.0, 0.5],
-		[0.5, 0.0, 0.5],
-		[-0.5, 0.0, -0.5],
-		[0.5, 0.0, -0.5],
-		[-0.5, 0.0, -0.5],
-		[-0.5, 0.0, 0.5]
-	];
-
 	const colors = isRGB ? [rgb[0], rgb[1], rgb[2]] : [transformColor(color.getRed()), transformColor(color.getGreen()), transformColor(color.getBlue())];
 	let counter = 0;
 	Tessellator.begin(3).colorize(colors[0], colors[1], colors[2]);
-	positions.forEach(pos => {
+	drawBoxPositions.forEach(pos => {
 		Tessellator.pos(
 			position[0] + 0.5 + pos[0] * width,
 			position[1] + expandY + pos[1] * height,
@@ -671,8 +673,10 @@ function sendChangelog() {
 	const MessageStr = new Message(
 		StartSeparator,
 		`${Color.DARK_GREEN}Changelog:${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}code revamp${Color.LINE_BREAK}`,
-		`${Color.GRAY}● ${Color.GREEN}fixed entity name is not rendering if box is disabled${Color.LINE_BREAK}${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Headless Horseman${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Corleone${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Jungle Key Guardian${Color.LINE_BREAK}`,
+		`${Color.GRAY}● ${Color.GREEN}added Worm${Color.LINE_BREAK}${Color.LINE_BREAK}`,
 		`${Color.AQUA}Discord for suggestions, bug-reports, more modules and more:${Color.LINE_BREAK}`,
 		new TextComponent(`${Color.BLUE}https://discord.gg/W64ZJJQQxy${Color.LINE_BREAK}`).setClick('open_url', 'https://discord.gg/W64ZJJQQxy'),
 		EndSeparator
