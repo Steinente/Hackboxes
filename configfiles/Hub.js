@@ -277,6 +277,38 @@ class Hub {
 
     @SwitchProperty({
         name: Setting.Enabled,
+        description: 'Nighttime Boss',
+        category: Setting.Misc,
+        subcategory: Setting.Horseman
+    })
+    horsemanEnabled = true;
+
+    @SwitchProperty({
+        name: Setting.ThroughWall,
+        category: Setting.Misc,
+        subcategory: Setting.Horseman
+    })
+    horsemanThroughWallEnabled = true;
+
+    @ColorProperty({
+        name: Setting.Color,
+        category: Setting.Misc,
+        subcategory: Setting.Horseman,
+        allowAlpha: false
+    })
+    horsemanColor = new Color(1, 0, 0);
+
+    @SwitchProperty({
+        name: Setting.RGB,
+        category: Setting.Misc,
+        subcategory: Setting.Horseman
+    })
+    horsemanRGBEnabled = false;
+
+    // --------------------------------------
+
+    @SwitchProperty({
+        name: Setting.Enabled,
         description: 'Drops Chimera Book',
         category: Setting.Mythological,
         subcategory: Setting.Inquisitor
