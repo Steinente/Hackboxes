@@ -92,6 +92,16 @@ class General {
     }
 
     @ButtonProperty({
+        name: Setting.CrystalHollows,
+        placeholder: Setting.Open,
+        category: Setting.Areas,
+        subcategory: Setting.Areas
+    })
+    openCrystalHollows() {
+        ChatLib.command('hb hollows', true);
+    }
+
+    @ButtonProperty({
         name: Setting.FarmingIslands,
         placeholder: Setting.Open,
         category: Setting.Areas,
