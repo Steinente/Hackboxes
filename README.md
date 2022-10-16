@@ -29,7 +29,3 @@ The purpose of these modules is to frame significant mobs on Hypixel Skyblock wi
  - Should look like this: `config/ChatTriggers/modules/Hackboxes/[content like index.js]`
 11. Restart Minecraft or run the command `/ct reload`.
 12. Done.
-
-## Contact
-
-**Discord: _https://discord.gg/W64ZJJQQxy_**
